@@ -4,7 +4,10 @@
 import math
 import numpy as np
 import pandas as pd
+import geopandas as gpd
 import matplotlib.pyplot as plt
+from pathlib import Path
+
 
 province_list = ['Groningen',
                  'Friesland',
@@ -59,7 +62,15 @@ plt.xlabel("Transport Costs")
 plt.ylabel("Deterrence Function Value")
 plt.show()
     
-    
+
+world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+netherlands = world[world.name == "Netherlands"]
+
+
+fig, ax = plt.subplots(figsize=(10, 10))
+netherlands.plot(ax=ax, color='lightblue', edgecolor='black')
+ax.set_title('Map of the Netherlands')
+plt.show()    
 
 
 
