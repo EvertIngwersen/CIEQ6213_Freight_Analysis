@@ -1,12 +1,16 @@
 
 #Excel toy test file
+#TODO: make new map
 
 import math
 import numpy as np
 import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
+
 from pathlib import Path
+from shapely.geometry import Polygon, MultiPolygon
+
 
 
 province_list = ['Groningen',
@@ -63,22 +67,33 @@ plt.ylabel("Deterrence Function Value")
 plt.show()
     
 
+# Load shapefile
 shapefile_dir = Path(__file__).parent / 'ne_10m_admin_0_countries'
 shapefile_path = shapefile_dir / 'ne_10m_admin_0_countries.shp'
 world = gpd.read_file(shapefile_path)
-netherlands = world[world.NAME == "Netherlands"]
+
+# Select Netherlands
+netherlands = world[world.NAME == "Netherlands"].copy()
+
+# Extract only the largest polygon (European part)
+def get_largest_polygon(geom):
+    if isinstance(geom, MultiPolygon):
+        return max(geom.geoms, key=lambda g: g.area)
+    else:
+        return geom
+
+netherlands["geometry"] = netherlands["geometry"].apply(get_largest_polygon)
 
 # Plot
 fig, ax = plt.subplots(figsize=(10, 10))
 netherlands.plot(ax=ax, color='lightblue', edgecolor='black')
 
-# Get bounding box and set x/y limits for zoom
+# Zoom tightly around European Netherlands
 minx, miny, maxx, maxy = netherlands.total_bounds
-ax.set_xlim(minx - 1, maxx + 1)  # Add margin
-ax.set_ylim(miny - 1, maxy + 1)
+ax.set_xlim(minx - 0.1, maxx + 0.1)
+ax.set_ylim(miny - 0.1, maxy + 0.1)
 
-# Title and display
-ax.set_title('Zoomed-In Map of the Netherlands')
+ax.set_title('Tightly Zoomed-In Map of the European Netherlands')
 plt.show()
 
 
