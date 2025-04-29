@@ -4,6 +4,7 @@
 import math
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 province_list = ['Groningen',
                  'Friesland',
@@ -49,7 +50,14 @@ c_ij_list = np.arange(0,500,20)
 r_ij_list = np.zeros(len(c_ij_list))
 for i in range(len(c_ij_list)):
     r_ij_list[i] = math.exp(β*c_ij_list[i])
-    
+
+plt.figure(1)
+plt.plot(c_ij_list,r_ij_list)
+plt.grid()
+plt.title("Deterrence Function")
+plt.xlabel("Transport Costs")
+plt.ylabel("Deterrence Function Value")
+plt.show()
     
     
 
