@@ -17,7 +17,7 @@ province_list = ['Groningen',
                  'Noord-Brabant',
                  'Limburg']
 
-OD = [
+OD = np.array([
     [15, 60, 94, 105, 55, 136, 131, 253, 342, 253, 366],
     [56, 15, 92, 98, 56, 155, 124, 230, 325, 256, 428],
     [101, 95, 15, 48, 103, 106, 151, 144, 253, 242, 283],
@@ -29,9 +29,9 @@ OD = [
     [381, 372, 256, 206, 267, 103, 155, 103, 15, 99, 153],
     [258, 271, 254, 184, 139, 101, 118, 104, 99, 15, 106],
     [430, 436, 293, 240, 189, 159, 216, 190, 147, 95, 15],
-]
+])
 
-β = 0.01
+β = -0.01
 cost_values = np.array(OD)
 
 c_ij = pd.DataFrame(OD, index=province_list, columns=province_list)
@@ -45,7 +45,13 @@ for i in range(len(province_list)):
     for j in range(len(province_list)):
         flow_matrix[i,j] = A_i[i]*B_j[j]*math.exp(OD[i,j]*β)
         
-
+c_ij_list = np.arange(0,500,20)
+r_ij_list = np.zeros(len(c_ij_list))
+for i in range(len(c_ij_list)):
+    r_ij_list[i] = math.exp(β*c_ij_list[i])
+    
+    
+    
 
 
 
