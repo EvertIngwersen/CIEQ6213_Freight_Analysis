@@ -63,14 +63,23 @@ plt.ylabel("Deterrence Function Value")
 plt.show()
     
 
-world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-netherlands = world[world.name == "Netherlands"]
+shapefile_dir = Path(__file__).parent / 'ne_10m_admin_0_countries'
+shapefile_path = shapefile_dir / 'ne_10m_admin_0_countries.shp'
+world = gpd.read_file(shapefile_path)
+netherlands = world[world.NAME == "Netherlands"]
 
-
+# Plot
 fig, ax = plt.subplots(figsize=(10, 10))
 netherlands.plot(ax=ax, color='lightblue', edgecolor='black')
-ax.set_title('Map of the Netherlands')
-plt.show()    
+
+# Get bounding box and set x/y limits for zoom
+minx, miny, maxx, maxy = netherlands.total_bounds
+ax.set_xlim(minx - 1, maxx + 1)  # Add margin
+ax.set_ylim(miny - 1, maxy + 1)
+
+# Title and display
+ax.set_title('Zoomed-In Map of the Netherlands')
+plt.show()
 
 
 
