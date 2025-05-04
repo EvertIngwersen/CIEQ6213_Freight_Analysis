@@ -91,8 +91,8 @@ def Estimate(Parameters):
             # for both road and rail
             if i != j:
                 SystUtilRoad[i,j] = Beta*RoadCosts[i,j] + Beta*RoadTime[i,j]
-                SystUtilRail[i,j] = Beta*RailCosts[i,j] + Beta*RailTime[i,j]
-    
+                SystUtilRail[i,j] = RailCosts[i,j] + Beta * RailTime[i,j] + RailASC_O[i] + RailASC_D[j]
+
     # If the denominator of the logit function is really small (0), 
     # return RMSE = 27.05 (which is too high to be a global minimum)
     if 0 in (np.exp(-Mu*SystUtilRoad) + np.exp(-Mu*SystUtilRail)):
@@ -133,7 +133,30 @@ def Callback(x, RMSE, context):
         return True
     else: return False
 
+# Variable 'result' will store the estimates of parameters, and the RMSE-value
+# and other information produced (e.g. number of iterations). The seed is set
+# to compare your results when you change something in the code (it uses the
+# same random variables)
+result = optimize.dual_annealing(Estimate, bounds = Bounds, \
+                                 callback = Callback, seed = 1991)
 
+# Write results to their individual variables 
+Beta      = result.x[0]
+Mu        = result.x[1]
+RailASC_O = result.x[2:11]
+RailASC_D = result.x[11:20]
+
+# ---- Results ----
+print('\n----------------------------Results------------------------------\n')
+
+print('RMSE = \t\t\t\t\t\t\t\t%.7f' %result.fun)
+print('Value of Time (VoT) = \t\t\t\t%.2f' %Beta)
+print('Mu = \t\t\t\t\t\t\t\t%.4f' %Mu)
+for i in N:
+    print('RailASC for', ''.join(Countries[i]), \
+          'as origin is: \t\t%.2f' %RailASC_O[i])
+    print('RailASC for', ''.join(Countries[i]), \
+          'as destination is: \t%.2f' %RailASC_D[i])
 
 
 
