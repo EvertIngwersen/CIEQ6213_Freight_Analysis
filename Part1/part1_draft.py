@@ -72,7 +72,7 @@ SystUtilRail = np.zeros((n,n))
 # tool, will return a RSME value ----
 def Estimate(Parameters):
     # All unknowns as parameters
-    Beta        = Parameters[0]
+    Beta        = Parameters[0] #what is this?
     Mu          = Parameters[1]
     RailASC_O   = Parameters[2:11]
     RailASC_D   = Parameters[11:20]
