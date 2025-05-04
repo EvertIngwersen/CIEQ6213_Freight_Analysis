@@ -40,6 +40,15 @@ RailTariff  = 0.4    # Euro/km
 RoadSpeed   = 60    # km/h
 RailSpeed   = 30    # km/h
 
+# ---- Build cost and time matrices, based on performance parameters ----
+RoadCosts   = ??    # Euro
+RailCosts   = ??    # Euro
+RoadTime    = ??    # hour
+RailTime    = ??    # hour
+
+
+
+
 
 
 
