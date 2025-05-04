@@ -35,18 +35,38 @@ N = range(n)        # Set of countries (from 0 to 8)
 
 # ---- Parameters ----
 # Performance parameters for transport modes
-RoadTariff  = 1    # Euro/km
-RailTariff  = 0.4    # Euro/km
+RoadTariff  = 1     # Euro/km
+RailTariff  = 0.4   # Euro/km
 RoadSpeed   = 60    # km/h
 RailSpeed   = 30    # km/h
 
 # ---- Build cost and time matrices, based on performance parameters ----
-RoadCosts   = ??    # Euro
-RailCosts   = ??    # Euro
-RoadTime    = ??    # hour
-RailTime    = ??    # hour
+RoadCosts   = RoadTariff*RoadDist    # Euro
+RailCosts   = RailTariff*RailDist    # Euro
+RoadTime    = RoadDist/RoadSpeed    # hour
+RailTime    = RailDist/RailSpeed    # hour
 
+# ---- Build observed shares matrices, with 0.5 for intra-country ----
+# Create empty matrices
+Obs_Shares_Road = np.zeros((n,n))
+Obs_Shares_Rail = np.zeros((n,n))
+# Fill observed shares matrices
+for i in N:
+    for j in N:
+        # Intrazonal/intra-country gets modal split 50/50 %
+        if i == j:
+            Obs_Shares_Road[i,j] = 0.5
+            Obs_Shares_Rail[i,j] = 0.5
+        # Observed modal split from one country to another for all OD-pairs
+        if i != j:
+            Obs_Shares_Road[i,j] = RoadVol[i,j]/TotalVol[i,j]
+            Obs_Shares_Rail[i,j] = RailVol[i,j]/TotalVol[i,j]
 
+# ---- Create empty systemic utility matrices we will fill later on ----
+# For road
+SystUtilRoad = np.zeros((n,n))
+# For rail
+SystUtilRail = np.zeros((n,n))
 
 
 
