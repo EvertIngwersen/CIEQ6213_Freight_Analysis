@@ -32,3 +32,42 @@ RailDist    = np.array([[i.value for i in j] for j in wsRailDist['B2':'J10']])
 # ---- Sets ----
 n = len(RoadVol)    # Number of countries
 N = range(n)        # Set of countries (from 0 to 8)
+
+# ---- Parameters ----
+# Performance parameters for transport modes
+RoadTariff  = 1    # Euro/km
+RailTariff  = 0.4    # Euro/km
+RoadSpeed   = 60    # km/h
+RailSpeed   = 30    # km/h
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
