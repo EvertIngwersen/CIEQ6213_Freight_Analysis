@@ -47,10 +47,44 @@ def find_mispriced_options(ticker, r):
                 if abs(diff) > 0.5:  # Filter for meaningful difference
                     print(f"{option_type.upper()} {expiry} Strike: {K} | Market: {market_price:.2f} | BSM: {theo_price:.2f} | Diff: {diff:.2f} => {'BUY' if diff < 0 else 'SELL'}")
 
-# Example use
-find_mispriced_options('AAPL',r)  # Replace with any ticker
-        
+dat = yf.Ticker("MSFT")
+print(dat.info)
+
+
+# Define your stock list
+stock_list = [
+    'AAPL', 'MSFT', 'GOOG', 'AMZN', 'META',
+    'TSLA', 'NVDA', 'PYPL', 'SPY', 'AMD',
+    'INTC', 'NFLX', 'IBM', 'WMT', 'DIS'
+]
+
+# Dictionary to store stock data
+stock_data_dict = {}
+
+# Loop over tickers and store selected info
+for ticker in stock_list:
+    print(f"Fetching data for {ticker}...")
+    tkr = yf.Ticker(ticker)
+    try:
+        # Use tkr.info directly for current price and other info
+        stock_data_dict[ticker] = {
+            'info': tkr.info,
+            'currentPrice': tkr.info.get('currentPrice', None)  # Use .get() to avoid KeyError
+        }
+    except Exception as e:
+        print(f"Failed to fetch info for {ticker}: {e}")
+
+# Optionally, print the results for debugging or analysis
+for ticker, data in stock_data_dict.items():
+    print(f"\n{ticker}: {data}")
     
+    
+    
+
+
+
+
+
     
     
     
