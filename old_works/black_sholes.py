@@ -30,6 +30,41 @@ def find_mispriced_options(ticker, r):
     print(f"\nChecking options for {ticker} - Spot price: ${spot_price:.2f}")
     for expiry in stock.options[:1]:
         options_chain = stock.option_chain(expiry)
+        for option_type, options_df in [('call', options_chain.calls), ('put', options_chain.puts)]:
+            for _, row in options_df.iterrows():
+                K = row['strike']
+                market_price = row['lastPrice']
+                if market_price == 0 or row['impliedVolatility'] is None:
+                    continue
+                iv = row['impliedVolatility']
+                T = (datetime.strptime(expiry, "%Y-%m-%d") - datetime.now()).days / 365.0
+                if T <= 0:
+                    continue
+
+                theo_price = black_scholes(spot_price, K, T, r, iv, option_type)
+                diff = market_price - theo_price
+
+                if abs(diff) > 0.5:  # Filter for meaningful difference
+                    print(f"{option_type.upper()} {expiry} Strike: {K} | Market: {market_price:.2f} | BSM: {theo_price:.2f} | Diff: {diff:.2f} => {'BUY' if diff < 0 else 'SELL'}")
+
+# Example use
+find_mispriced_options('AAPL',r)  # Replace with any ticker
         
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
