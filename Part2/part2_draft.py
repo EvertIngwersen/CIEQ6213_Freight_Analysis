@@ -200,7 +200,7 @@ def estimateFinalFlows_ODm(
                                     + (RoadTariff[j - 9][j] + Beta * RoadTime[j - 9][j]) + +OD[i - 9][0] + OD[j - 9][
                                         1]) * W[findDemandIndex(i), findDemandIndex(j)]
                         tempMode = m
-                    #print("mode %d cost %f", m, tempCost)
+                    # print("mode %d cost %f", m, tempCost)
                     if minCost > tempCost:
                         minCost = tempCost
                         bestMode = tempMode
@@ -220,6 +220,8 @@ def estimateFinalFlows_ODm(
     return flow_Quantity_ODm
 
 ''' Experiment loop starts here'''
+
+
 number_of_Possible_Hubs = 9  # Total number of possible hub locations
 # For road (m=0), intermodal (m=1), and direct rail (m=2)
 M = range(
