@@ -149,6 +149,71 @@ for (i, j) in commodity_pairs:
 for (i, j) in commodity_pairs:
     model.addConstr(gp.quicksum(b[i, j, k] for k in V_h) + e[i, j] == 1, name=f"delivery_connection_{i}_{j}")
 
+# Flow conservation constraint: ensure commodities flow from origin to destination via hubs
+for (i, j) in commodity_pairs:
+    for k in V_h:
+        model.addConstr(
+            a[i, j, k] + gp.quicksum(x[i, j, k, m, t] for m in V_h if m != k for t in T) 
+            == b[i, j, k] + gp.quicksum(x[i, j, m, k, t] for m in V_h if m != k for t in T),
+            name=f"flow_conservation_{i}_{j}_{k}"
+        )
+
+# Constraints to ensure y_{kmt} can only be 1 if both hubs k and m are selected
+for k in V_h:
+    for m in V_h:
+        if k != m:  # Ensure k and m are distinct hubs
+            for t in T:
+                model.addConstr(
+                    y[k, m, t] <= z[k],  # Service between k and m activated only if k is selected
+                    name=f"service_activation_k_{k}_m_{m}_t_{t}_z_k"
+                )
+                model.addConstr(
+                    y[k, m, t] <= z[m],  # Service between k and m activated only if m is selected
+                    name=f"service_activation_k_{k}_m_{m}_t_{t}_z_m"
+                )
+
+# Access Flow Implies Hub is Open (ensure i != j)
+for i in V_d:
+    for j in V_d:
+        if i != j:  # Add this check
+            for k in V_h:
+                model.addConstr(
+                    a[i, j, k] <= z[k],  # If commodity (i, j) accesses hub k, then hub k must be selected
+                    name=f"access_flow_implies_open_{i}_{j}_{k}"
+                )
+
+# Delivery Flow Implies Hub is Open (ensure i != j)
+for i in V_d:
+    for j in V_d:
+        if i != j:  # Add this check
+            for k in V_h:
+                model.addConstr(
+                    b[i, j, k] <= z[k],  # If commodity (i, j) is delivered from hub k, then hub k must be selected
+                    name=f"delivery_flow_implies_open_{i}_{j}_{k}"
+                )
+                
+                
+# Flow Uses Only Active Links
+for i in V_d:
+    for j in V_d:
+        if i != j:  # Ensure we are only looking at valid (i, j) pairs where i != j
+            for k in V_h:
+                for m in V_h:
+                    if k != m:  # Ensure k and m are distinct hubs
+                        for t in T:
+                            model.addConstr(
+                                x[i, j, k, m, t] <= y[k, m, t],  # Flow can only occur if the service is activated
+                                name=f"flow_uses_active_link_{i}_{j}_{k}_{m}_{t}"
+                            )         
+
+
+
+
+
+
+
+
+
 
 
 
