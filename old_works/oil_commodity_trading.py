@@ -33,57 +33,58 @@ hub_service_triples = [(k, m, t) for k, m in hub_pairs for t in T]
 
 #-------------------PARAMTERS------------------
 W = {
-    ('A', 'B'): 15,
-    ('A', 'C'): 20,
-    ('B', 'A'): 10,
-    ('B', 'C'): 25,
-    ('C', 'A'): 30,
-    ('C', 'B'): 5,
+    ('A', 'B'): 13,
+    ('A', 'C'): 10,
+    ('B', 'A'): 16,
+    ('B', 'C'): 26,
+    ('C', 'A'): 13,
+    ('C', 'B'): 17,
 }
 
 C_road = {
-    ('A', 'B'): 30,
-    ('A', 'C'): 25,
-    ('B', 'A'): 28,
-    ('B', 'C'): 20,
-    ('C', 'A'): 35,
-    ('C', 'B'): 22,
+    ('A', 'B'): 31,
+    ('A', 'C'): 37,
+    ('B', 'A'): 36,
+    ('B', 'C'): 25,
+    ('C', 'A'): 28,
+    ('C', 'B'): 32,
 }
 
 C_access = {
-    ('A', 'H1'): 10,
-    ('A', 'H2'): 12,
-    ('B', 'H1'): 8,
-    ('B', 'H2'): 9,
-    ('C', 'H1'): 11,
-    ('C', 'H2'): 7,
+    ('A', 'H1'): 14,
+    ('A', 'H2'): 10,
+    ('B', 'H1'): 12,
+    ('B', 'H2'): 15,
+    ('C', 'H1'): 12,
+    ('C', 'H2'): 5,
 }
 
 C_hub = {
-    ('H1', 'H2', 'rail'): 20,
-    ('H1', 'H2', 'ship'): 15,
-    ('H2', 'H1', 'rail'): 20,
-    ('H2', 'H1', 'ship'): 15,
+    ('H1', 'H2', 'rail'): 182,
+    ('H1', 'H2', 'ship'): 49,
+    ('H2', 'H1', 'rail'): 106,
+    ('H2', 'H1', 'ship'): 33,
 }
 
 C_delivery = {
-    ('H1', 'A'): 6,
-    ('H1', 'B'): 5,
-    ('H1', 'C'): 4,
-    ('H2', 'A'): 7,
-    ('H2', 'B'): 6,
-    ('H2', 'C'): 5,
+    ('H1', 'A'): 7,
+    ('H1', 'B'): 7,
+    ('H1', 'C'): 8,
+    ('H2', 'A'): 6,
+    ('H2', 'B'): 4,
+    ('H2', 'C'): 6,
 }
 
 F_k = {
-       'H1': 200,
-       'H2': 400}
+    'H1': 111,
+    'H2': 488,
+}
 
 F_kmt = {
-    ('H1', 'H2', 'rail'): 100,
-    ('H1', 'H2', 'ship'): 80,
-    ('H2', 'H1', 'rail'): 100,
-    ('H2', 'H1', 'ship'): 80,
+    ('H1', 'H2', 'rail'): 955,
+    ('H1', 'H2', 'ship'): 67,
+    ('H2', 'H1', 'rail'): 1291,
+    ('H2', 'H1', 'ship'): 55,
 }
 
 #-------------------DECISION VARIABLES-------------------
@@ -207,7 +208,22 @@ for i in V_d:
                             )         
 
 
+#-----------------SOLVING MODEL--------------------
 
+# Solve the model
+model.optimize()
+
+if model.status == GRB.OPTIMAL:
+    print("Optimal solution found!")
+    # Access the optimal values for the decision variables
+    for var in model.getVars():
+        print(f'{var.varName}: {var.x}')
+elif model.status == GRB.INFEASIBLE:
+    print("The model is infeasible!")
+elif model.status == GRB.UNBOUNDED:
+    print("The model is unbounded!")
+else:
+    print(f"Optimization ended with status {model.status}")
 
 
 
