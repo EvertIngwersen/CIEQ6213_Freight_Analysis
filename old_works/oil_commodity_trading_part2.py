@@ -85,13 +85,104 @@ s_it = {(i, t): np.random.randint(500, 1000) for i in I for t in T}
 # Demand: d_k(t)
 d_kt = {(k, t): np.random.randint(200, 600) for k in K for t in T}
 
+#----------DECISION VARIABLES--------------
+
+model = gp.Model("Oil_Logistics")
+
+x = model.addVars(I, J, P.keys(), T, name="x", lb=0)  # oil transported from supplier i to storage j via route p at time t
+y = model.addVars(J, K, P.keys(), T, name="y", lb=0)  # oil transported from storage j to customer k via route p at time t
+z = model.addVars(J, T, name="z", lb=0)  # storage level at location j at time t
+
+model.setObjective(
+    gp.quicksum(c_p[p] * x[i, j, p, t] for i in I for j in J for p in P.keys() for t in T) +  # Transportation cost
+    gp.quicksum(h_j[j] * z[j, t] for j in J for t in T) +  # Storage cost
+    gp.quicksum(r_p[p] * x[i, j, p, t] for i in I for j in J for p in P.keys() for t in T),  # Risk penalty
+    GRB.MINIMIZE
+)
+
+#---------------CONSTRAINTS----------------
+# Supply Constraints: ensure that the total oil supplied does not exceed the supply capacity
+for i in I:
+    for t in T:
+        model.addConstr(gp.quicksum(x[i, j, p, t] for j in J for p in P.keys()) <= s_it[(i, t)],
+                        name=f"Supply_{i}_{t}")
+
+# Demand Constraints: ensure that the total oil delivered to each customer meets their demand
+for k in K:
+    for t in T:
+        model.addConstr(gp.quicksum(y[j, k, p, t] for j in J for p in P.keys()) == d_kt[(k, t)],
+                        name=f"Demand_{k}_{t}")
+
+# Storage Balance Constraints: ensure that the storage balance is correct
+for j in J:
+    for t in T:
+        if t == 0:
+            # Initial storage constraint (at t=0)
+            model.addConstr(z[j, t] == 0, name=f"InitialStorage_{j}_{t}")  # assuming initial storage is zero
+        else:
+            # Storage balance constraint
+            model.addConstr(z[j, t] == z[j, t-1] + gp.quicksum(x[i, j, p, t] for i in I for p in P.keys()) - 
+                             gp.quicksum(y[j, k, p, t] for k in K for p in P.keys()), 
+                             name=f"StorageBalance_{j}_{t}")
+
+# Route Capacity Constraints: ensure that no route exceeds its capacity
+for p in P.keys():
+    for t in T:
+        model.addConstr(
+            gp.quicksum(x[i, j, p, t] for i in I for j in J) + gp.quicksum(y[j, k, p, t] for j in J for k in K) 
+            <= Q_p[p],
+            name=f"RouteCapacity_{p}_{t}"
+        )
+
+# Non-Negativity Constraints: ensure all variables are non-negative
+for i in I:
+    for j in J:
+        for p in P.keys():
+            for t in T:
+                model.addConstr(x[i, j, p, t] >= 0, name=f"NonNeg_x_{i}_{j}_{p}_{t}")
+                model.addConstr(y[j, k, p, t] >= 0, name=f"NonNeg_y_{j}_{k}_{p}_{t}")
+                model.addConstr(z[j, t] >= 0, name=f"NonNeg_z_{j}_{t}")
+
+#---------PROGRESS CALLBACK FUNCTION------------------
+
+def my_callback(model, where):
+    if where == GRB.Callback.MIP:
+        # Get the current best objective value
+        obj_val = model.cbGet(GRB.Callback.MIP_OBJBST)
+        # Get the current iteration
+        iteration = model.cbGet(GRB.Callback.MIP_NODCNT)
+        # Print progress at regular intervals (every 100 iterations)
+        if iteration % 100 == 0:
+            print(f"Iteration {iteration}: Best Obj = {obj_val:.2f}")
 
 
+#-----------SOLVE THE MODEL------------------
+# Set up to log the progress with the callback function
+model.optimize(my_callback)
 
+#-----------PRINT SUMMARY AFTER OPTIMAL SOLUTION------------------
 
+# Check if the optimization was successful
+if model.status == GRB.OPTIMAL:
+    print("\nOptimization is complete and an optimal solution has been found.")
+    print(f"Optimal Objective Value: {model.objVal:.2f}")
 
+    # Print out the values of the decision variables in the optimal solution
+    print("\nOptimal decision variables (some examples):")
+    for i in I:
+        for j in J:
+            for p in P.keys():
+                for t in T:
+                    if x[i, j, p, t].x > 0:  # If there is positive transportation
+                        print(f"x[{i}, {j}, {p}, {t}] = {x[i, j, p, t].x}")
 
-
+    # Print storage levels
+    for j in J:
+        for t in T:
+            if z[j, t].x > 0:  # If there is positive storage
+                print(f"z[{j}, {t}] = {z[j, t].x}")
+else:
+    print("Optimization failed to find an optimal solution.")
 
 
 
