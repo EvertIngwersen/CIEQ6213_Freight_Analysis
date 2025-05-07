@@ -5,26 +5,31 @@ Created on Wed May  7 13:04:08 2025
 @author: evert
 """
 
+import random
 import numpy as np
 import gurobipy as gp
 from gurobipy import GRB
+
+random.seed(77)
+
 
 # Define time periods
 t_end = 100  # 100 days
 T = np.arange(0, t_end, 1)
 
 #---------SET AND INDICES--------------
-# Expanded oil suppliers (I)
+#oil suppliers (I)
 I = ['Shell', 'Vitol BV', 'BP', 'ExxonMobil', 'Chevron', 'TotalEnergies', 'Saudi Aramco', 'Royal Dutch Shell']
 
-# Expanded oil storage locations (J)
+#oil storage locations (J)
 J = ['Rotterdam', 'Qatar', 'Dallas', 'Amsterdam', 'Sydney', 'Antwerpen', 'Singapore', 'Houston', 'Dubai']
 
-# Expanded oil customers (K)
+#customers (K)
 K = ['RedBull Racing', 'DeutscheBahn', 'Maersk', 'MSC', 'KLM', 'Delta', 'Air France', 'Porsche', 'Tesla']
 
 # Define set P (Transportation routes) with expanded routes
 P = {
+    0: ('Shipping', 'Vitol BV', 'Maersk'),        # p0: Shipping Route from Vitol BV to Maersk 
     1: ('Pipeline', 'Shell', 'Rotterdam'),         # p1: Pipeline Route from Shell to Rotterdam
     2: ('Truck', 'Rotterdam', 'RedBull Racing'),  # p2: Truck Route from Rotterdam to RedBull Racing
     3: ('Pipeline', 'Vitol BV', 'Qatar'),         # p3: Pipeline Route from Vitol BV to Qatar
@@ -44,7 +49,6 @@ P = {
     17: ('Shipping', 'TotalEnergies', 'Sydney'),  # p17: Shipping Route from TotalEnergies to Sydney
     18: ('Truck', 'Singapore', 'Air France'),     # p18: Truck Route from Singapore to Air France
     19: ('Pipeline', 'Saudi Aramco', 'Houston'),  # p19: Pipeline Route from Saudi Aramco to Houston
-    20: ('Shipping', 'Vitol BV', 'Maersk')        # p20: Shipping Route from Vitol BV to Maersk
 }
 
 # Display the expanded sets and transportation routes
@@ -56,6 +60,32 @@ print("\nTransportation Routes (P):")
 for route_id, details in P.items():
     mode, source, destination = details
     print(f"Route {route_id}: Mode = {mode}, Source = {source}, Destination = {destination}")
+
+#--------------PARAMETERS--------------------
+p_oil = {i: 50 for i in range(0, t_end)} # fixed price at 50% per barrel
+c_p = {i: random.randint(1, 100) for i in range(0, 20)} #cost per route
+r_p = {i: random.randint(1, 100) for i in range(0, 20)} #risk penalty for route p
+h_j = {
+ 'Rotterdam': 91,
+ 'Qatar': 14,
+ 'Dallas': 35,
+ 'Amsterdam': 31,
+ 'Sydney': 28,
+ 'Antwerpen': 17,
+ 'Singapore': 94,
+ 'Houston': 13,
+ 'Dubai': 86
+} #holding cost oil
+
+Q_p = {i: random.randint(1, 100) for i in range(0, 20)} #capacity of route P
+
+# Maximum supply capacity: s_i(t)
+s_it = {(i, t): np.random.randint(500, 1000) for i in I for t in T}
+
+# Demand: d_k(t)
+d_kt = {(k, t): np.random.randint(200, 600) for k in K for t in T}
+
+
 
 
 
