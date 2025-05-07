@@ -41,6 +41,14 @@ W = {
     ('C', 'B'): 5,
 }
 
+C_road = {
+    ('A', 'B'): 30,
+    ('A', 'C'): 25,
+    ('B', 'A'): 28,
+    ('B', 'C'): 20,
+    ('C', 'A'): 35,
+    ('C', 'B'): 22,
+}
 
 C_access = {
     ('A', 'H1'): 10,
@@ -71,10 +79,75 @@ F_k = {
        'H1': 200,
        'H2': 400}
 
-#----------------DECISION VARIABLES-----------
+F_kmt = {
+    ('H1', 'H2', 'rail'): 100,
+    ('H1', 'H2', 'ship'): 80,
+    ('H2', 'H1', 'rail'): 100,
+    ('H2', 'H1', 'ship'): 80,
+}
+
+#-------------------DECISION VARIABLES-------------------
 model = gp.Model("Oil Network")
 
+# z_k: 1 if hub k is selected
+z = model.addVars(V_h, vtype=GRB.BINARY, name="z")
 
+# y_{kmt}: 1 if service t is activated between hubs k and m
+y = model.addVars(V_h, V_h, T, vtype=GRB.BINARY, name="y")
+
+# e_{ij}: Commodity (i,j) goes directly by road
+e = model.addVars(commodity_pairs, vtype=GRB.BINARY, name="e")
+
+# a_{ijk}: Commodity (i,j) accesses hub k from origin i
+a = model.addVars(commodity_pairs, V_h, vtype=GRB.BINARY, name="a")
+
+# x_{ijkmt}: Commodity (i,j) goes from hub k to hub m using service t
+x = model.addVars(commodity_pairs, V_h, V_h, T, vtype=GRB.BINARY, name="x")
+
+# b_{ijk}: Commodity (i,j) is delivered from hub k to destination j
+b = model.addVars(commodity_pairs, V_h, vtype=GRB.BINARY, name="b")
+
+
+
+#-------------------OBJECTIVE FUNCTION-------------------
+# Initialize the objective
+objective = gp.QuadExpr()  # Gurobi's quadratic expression, useful for terms with binary variables
+
+# Add the commodity transport costs (first part of the objective)
+for (i, j) in commodity_pairs:
+    # Direct road transport cost (W_{ij} * C^{road}_{ij} * e_{ij})
+    objective += W.get((i, j), 0) * C_road.get((i, j), 0) * e[(i, j)]
+
+    # Add access and hub transport costs
+    for k in V_h:
+        objective += C_access.get((i, k), 0) * a[(i, j, k)]
+        for (k, m, t) in hub_service_triples:
+            objective += C_hub.get((k, m, t), 0) * x[(i, j, k, m, t)]
+
+    # Delivery costs
+    for k in V_h:
+        objective += C_delivery.get((k, j), 0) * b[(i, j, k)]
+
+# Add fixed costs for hubs (sum of F_k * z_k)
+for k in V_h:
+    objective += F_k.get(k, 0) * z[k]
+
+# Add fixed costs for services (sum of F_{kmt} * y_{kmt})
+for (k, m, t) in hub_service_triples:
+    objective += F_kmt.get((k, m, t), 0) * y[(k, m, t)]
+
+# Set the objective to minimize
+model.setObjective(objective, GRB.MINIMIZE)
+
+#------------------CONSTRAINTS----------------------------
+
+# First constraint: Each commodity (i,j) is either connected to a hub or goes directly by road
+for (i, j) in commodity_pairs:
+    model.addConstr(gp.quicksum(a[i, j, k] for k in V_h) + e[i, j] == 1, name=f"hub_connection_{i}_{j}")
+
+# Second constraint: Each commodity (i,j) is either delivered from a hub to destination j or goes directly by road
+for (i, j) in commodity_pairs:
+    model.addConstr(gp.quicksum(b[i, j, k] for k in V_h) + e[i, j] == 1, name=f"delivery_connection_{i}_{j}")
 
 
 
