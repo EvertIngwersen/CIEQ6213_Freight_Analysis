@@ -1,0 +1,89 @@
+
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[margin=1in]{geometry}
+
+\begin{document}
+
+\section*{Multicommodity Multimodal Network Design Problem}
+
+\subsection*{Sets and Indices}
+\begin{align*}
+V_d &:\quad \text{Set of demand nodes (origins/destinations)} \\
+V_h &:\quad \text{Set of potential hub nodes} \\
+V &= V_d \cup V_h \quad \text{Set of all nodes} \\
+T &:\quad \text{Set of service types (e.g., rail, high-speed rail)} \\
+(i, j) &\in V_d \times V_d, \quad i \neq j \quad \text{Commodity pairs (origin, destination)} \\
+k, m &\in V_h \quad \text{Hub indices} \\
+t &\in T \quad \text{Service type index}
+\end{align*}
+
+\subsection*{Parameters}
+\begin{align*}
+W_{ij} &:\quad \text{Quantity of commodity from } i \text{ to } j \\
+C^{road}_{ij} &:\quad \text{Cost of direct road transport from } i \text{ to } j \\
+C^{access}_{i,k} &:\quad \text{Cost of transporting from origin } i \text{ to hub } k \\
+C^{hub}_{k,m,t} &:\quad \text{Cost of transporting between hubs } k \text{ and } m \text{ with service } t \\
+C^{delivery}_{k,j} &:\quad \text{Cost of transporting from hub } k \text{ to destination } j \\
+F_k &:\quad \text{Fixed cost to open hub } k \\
+F_{kmt} &:\quad \text{Fixed cost to activate service } t \text{ between hubs } k \text{ and } m
+\end{align*}
+
+\subsection*{Decision Variables}
+\begin{align*}
+z_k &\in \{0,1\} \quad \text{1 if hub } k \text{ is selected} \\
+y_{kmt} &\in \{0,1\} \quad \text{1 if service } t \text{ is activated between hubs } k \text{ and } m \\
+e_{ij} &\in \{0,1\} \quad \text{1 if commodity } (i,j) \text{ goes directly by road} \\
+a_{ijk} &\in \{0,1\} \quad \text{1 if commodity } (i,j) \text{ accesses hub } k \text{ from origin } i \\
+x_{ijkmt} &\in \{0,1\} \quad \text{1 if } (i,j) \text{ goes from hub } k \text{ to } m \text{ using service } t \\
+b_{ijk} &\in \{0,1\} \quad \text{1 if commodity } (i,j) \text{ is delivered from hub } k \text{ to } j
+\end{align*}
+
+\subsection*{Objective Function}
+\begin{align*}
+\min \quad &\sum_{i,j} W_{ij} \cdot \bigg[
+    C^{road}_{ij} \cdot e_{ij}
+    + \sum_k C^{access}_{i,k} \cdot a_{ijk}
+    + \sum_{k,m,t} C^{hub}_{k,m,t} \cdot x_{ijkmt}
+    + \sum_k C^{delivery}_{k,j} \cdot b_{ijk}
+\bigg] \\
+&+ \sum_k F_k \cdot z_k
++ \sum_{k,m,t} F_{kmt} \cdot y_{kmt}
+\end{align*}
+
+\subsection*{Constraints}
+
+\textbf{1. Service Activation Implies Hub Open}
+\begin{align*}
+y_{kmt} &\leq z_k \quad \forall k,m \in V_h,\ t \in T \\
+y_{kmt} &\leq z_m \quad \forall k,m \in V_h,\ t \in T
+\end{align*}
+
+\textbf{2. Commodity Must Choose a Unique Route}
+\begin{align*}
+e_{ij} + \sum_k a_{ijk} = 1 \quad \forall i,j \in V_d,\ i \neq j
+\end{align*}
+
+\textbf{3. Access Flow Implies Hub is Open}
+\begin{align*}
+a_{ijk} \leq z_k \quad \forall i,j \in V_d,\ k \in V_h
+\end{align*}
+
+\textbf{4. Delivery Flow Implies Hub is Open}
+\begin{align*}
+b_{ijk} \leq z_k \quad \forall i,j \in V_d,\ k \in V_h
+\end{align*}
+
+\textbf{5. Flow Uses Only Active Links}
+\begin{align*}
+x_{ijkmt} \leq y_{kmt} \quad \forall i,j \in V_d,\ k,m \in V_h,\ t \in T
+\end{align*}
+
+\textbf{6. Flow Conservation for Multimodal Paths}
+\begin{align*}
+\sum_k a_{ijk} &= \sum_{k,m,t} x_{ijkmt} \quad \forall i,j \in V_d,\ i \neq j \\
+\sum_{k,m,t} x_{ijkmt} &= \sum_k b_{ijk} \quad \forall i,j \in V_d,\ i \neq j
+\end{align*}
+
+\end{document}
