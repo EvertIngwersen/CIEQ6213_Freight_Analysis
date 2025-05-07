@@ -72,7 +72,7 @@ F_k = {
        'H2': 400}
 
 #----------------DECISION VARIABLES-----------
-
+model = gp.Model("Oil Network")
 
 
 
