@@ -89,6 +89,7 @@ d_kt = {(k, t): np.random.randint(2, 6) for k in K for t in T}
 
 model = gp.Model("Oil_Logistics")
 
+
 x = model.addVars(I, J, P.keys(), T, name="x", lb=0)  # oil transported from supplier i to storage j via route p at time t
 y = model.addVars(J, K, P.keys(), T, name="y", lb=0)  # oil transported from storage j to customer k via route p at time t
 z = model.addVars(J, T, name="z", lb=0)  # storage level at location j at time t
