@@ -96,7 +96,9 @@ plt.ylabel('Y Coordinate')
 plt.grid(True)
 plt.axis('equal')
 plt.show()
-        
+
+
+
 
 
 
