@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 random.seed(777)
 
-# Create villages
+# Create villages (i is indice of village)
 V = {
     'Village1': (17, 34),
     'Village2': (94, 48),
@@ -25,7 +25,7 @@ V = {
     'Village8': (96, 82),
     'Village9': (6, 15),
     'Village10': (36, 5),
-    'Village11': (94, 71),
+    'Village11': (55, 51),
     'Village12': (16, 47),
     'Village13': (86, 23),
     'Village14': (77, 43),
@@ -35,7 +35,7 @@ V = {
     'Village18': (80, 66)
 }
 
-# Create factories
+# Create factories (j is indice of factory)
 F = {
     'Factory1': (67, 42),
     'Factory2': (12, 41),
@@ -53,6 +53,50 @@ F = {
     'Factory14': (77, 89)
 }
 
+# Create commodity types (k is commodity)
+P = ["Steel", "Oil", "Coal"]
+
+# Creating Param
+
+# Demand for commodity k for village i
+d_ij = {
+    'Village1': (5, 83, 1),
+    'Village2': (6, 2, 0),
+    'Village3': (0, 0, 46),
+    'Village4': (8, 12, 7),
+    'Village5': (11, 41, 4),
+    'Village6': (19, 75, 2),
+    'Village7': (37, 89, 6),
+    'Village8': (0, 67, 5),
+    'Village9': (13, 9, 3),
+    'Village10': (25, 15, 0),
+    'Village11': (55, 0, 12),
+    'Village12': (14, 39, 8),
+    'Village13': (78, 22, 9),
+    'Village14': (66, 40, 10),
+    'Village15': (0, 6, 2),
+    'Village16': (60, 99, 4),
+    'Village17': (92, 10, 1),
+    'Village18': (75, 0, 7)
+}
+
+# Production of commodity k in factory j
+p_jk = {
+    'Factory1': (0, 0, 20),
+    'Factory2': (0, 41, 0),
+    'Factory3': (0, 0, 50),
+    'Factory4': (0, 0, 15),
+    'Factory5': (0, 0, 40),
+    'Factory6': (90, 0, 0),
+    'Factory7': (0, 6, 0),
+    'Factory8': (0, 0, 80),
+    'Factory9': (0, 70, 0),
+    'Factory10': (3, 0, 0),
+    'Factory11': (0, 0, 27),
+    'Factory12': (0, 55, 0),
+    'Factory13': (0, 12, 0),
+    'Factory14': (77, 0, 0)
+}
 
 # Plotting the nodes
 plt.figure(figsize=(8, 8))
