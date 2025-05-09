@@ -98,16 +98,38 @@ p_jk = {
     'Factory14': (77, 0, 0)
 }
 
-# Plotting the nodes
-plt.figure(figsize=(8, 8))
-for name, (x, y) in V.items():
-    plt.plot(x, y, 'bo')  # 'bo' means blue circle
-    plt.text(x + 1, y + 1, name, fontsize=9)  # Label each point slightly offset
-for name, (x, y) in F.items():
-    plt.plot(x, y, 'r+')  # 'bo' means blue circle
-    plt.text(x + 1, y + 1, name, fontsize=9)  # Label each point slightly offset
+# Mapping from commodity index to color
+commodity_colors = {
+    0: 'green',   # Steel
+    1: 'black',   # Oil
+    2: 'orange'   # Coal
+}
 
-plt.title('Villages and Factories')
+# Plotting the nodes
+plt.figure(figsize=(10, 10))
+
+# Plot villages
+for name, (x, y) in V.items():
+    plt.plot(x, y, 'bo')  # blue circle for villages
+    plt.text(x + 1, y + 1, name, fontsize=9)
+
+# Plot factories with color and size depending on commodity and amount
+for name, (x, y) in F.items():
+    production = p_jk[name]
+    for k in range(len(production)):
+        if production[k] > 0:
+            color = commodity_colors[k]
+            size = production[k] * 3  # scale marker size
+            plt.scatter(x, y, s=size, c=color, marker='+', linewidths=2)
+            plt.text(x + 1, y + 1, name, fontsize=9)
+            break  # Only one commodity per factory
+
+# Legend for commodities
+for k, color in commodity_colors.items():
+    plt.scatter([], [], c=color, label=P[k], marker='+', s=100)
+
+plt.legend(title='Commodity Produced')
+plt.title('Villages and Factories by Commodity Type and Production')
 plt.xlabel('X Coordinate')
 plt.ylabel('Y Coordinate')
 plt.grid(True)
