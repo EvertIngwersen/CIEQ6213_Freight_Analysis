@@ -7,6 +7,8 @@ Created on Thu May  8 14:49:32 2025
 
 import random
 import numpy
+import math
+import itertools
 import matplotlib.pyplot as plt
 
 random.seed(777)
@@ -38,10 +40,15 @@ V = {
 # Assume V already exists from earlier code
 nodes = list(V.keys())
 
+
+# Service Type T
+
+T = ["High Speed", "Normal Rail"]
+
 # Create W: demand between random pairs of nodes
 W = {}
 
-random.seed(777)  # Keep consistent randomness
+random.seed(777) # Keep consistent randomness
 
 # Select 30 random (i,j) pairs without replacement and i ≠ j
 pairs = set()
@@ -54,7 +61,29 @@ while len(pairs) < 30:
 for (i, j) in pairs:
     W[(i, j)] = random.randint(10, 100)
 
+# Create C_n: node cost dictionary
+C_i = {}
 
+for node in V:
+    C_i[node] = random.randint(50, 500)
+    
+    
+# Create distance dictionary D 
+D = {}    
+    
+for i in V:
+    for j in V:
+        if i != j:
+            x1, y1 = V[i]
+            x2, y2 = V[j]
+            distance = math.hypot(x2 - x1, y2 - y1)  # Euclidean distance
+            D[(i, j)] = distance    
+
+Q_i = {}
+
+for node in V:
+    Q_i[node] = random.randint(50, 200)
+    
 # Plotting the nodes
 plt.figure(figsize=(8, 8))
 for name, (x, y) in V.items():
@@ -68,12 +97,6 @@ plt.grid(True)
 plt.axis('equal')
 plt.show()
         
-
-
-
-
-
-
 
 
 
