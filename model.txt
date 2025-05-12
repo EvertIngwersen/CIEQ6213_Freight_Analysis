@@ -1,0 +1,52 @@
+/*********************************************
+ * OPL 12.6.0.0 Model
+ * Author: MWP-WKS046088
+ * Creation Date: 2023 5 10 at 19:05:17
+ *********************************************/
+int N = 3; //products
+int S = 3; //demand scenarios
+int R = 3; //materials 
+
+range products = 1..N;
+ range scenarios = 1..S;
+range materials = 1..R;
+//first barge starts from seaport and cannot go to nijmegen, but only to Roermond
+
+  
+  
+  float Prob[scenarios]=[0.3, 0.4, 0.3];
+  int Dem[scenarios][products]=[[50,20,200],[150,110,225],[250,250,500]];
+  int Profits[products]=[60,40,10];
+  float Cost[materials]=[2,4,5.2];
+  float usage[materials][products]=[[8,6,1],[4,2,1.5],[2,1.5,0.5]];
+
+
+      //****Decision Variables*****
+      dvar float+ x[materials];           //materials bought
+	  dvar float+ y[products][scenarios];  //products produced
+	
+
+
+      //Objective
+
+      maximize
+      -sum(i in materials)(x[i]*Cost[i]) + 
+      sum(i in scenarios)sum(j in products)(y[j][i]*Profits[j]*Prob[i]); 
+
+  
+      subject to {     
+
+	  forall (i in materials,s in scenarios)ctONE:
+      sum(j in products) usage[i][j]*y[j][s]<= x[i];
+      
+      forall (i in products,s in scenarios)ctTWO:
+      y[i][s]<=Dem[s][i];
+      
+      //x[1]==1950;  //uncomment these if you want to fix the number of resources acquired in the first stage
+      //x[2]==850;
+      //x[3]==487.5;
+      
+     
+     
+     }
+ 
