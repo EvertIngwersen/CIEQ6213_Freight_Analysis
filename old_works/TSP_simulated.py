@@ -12,8 +12,8 @@ import matplotlib.pyplot as plt
 import random
 
 # Parameters
-num_cities = 10
-T_start = 1000
+num_cities = 20
+T_start = 1500
 T_min = 1
 alpha = 0.995
 random.seed(42)
