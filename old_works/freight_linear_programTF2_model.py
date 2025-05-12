@@ -56,6 +56,9 @@ F = {
 # Create commodity types (k is commodity)
 P = ["Steel", "Oil", "Coal"]
 
+# Set of transport types (indice t is transport link)
+T = ["Rail", "Road"] 
+
 # Creating Param
 
 # Demand for commodity k for village i
@@ -88,15 +91,30 @@ p_jk = {
     'Factory4': (0, 0, 15),
     'Factory5': (0, 0, 40),
     'Factory6': (90, 0, 0),
-    'Factory7': (0, 6, 0),
+    'Factory7': (0, 46, 0),
     'Factory8': (0, 0, 80),
     'Factory9': (0, 70, 0),
-    'Factory10': (3, 0, 0),
+    'Factory10': (40, 0, 0),
     'Factory11': (0, 0, 27),
     'Factory12': (0, 55, 0),
     'Factory13': (0, 12, 0),
     'Factory14': (77, 0, 0)
 }
+
+
+# Distance from factory j to village i: e_ji[j][i] = distance [km]
+e_ji = {}
+
+for j, (xj, yj) in F.items():
+    e_ji[j] = {}
+    for i, (xi, yi) in V.items():
+        dist = math.sqrt((xi - xj) ** 2 + (yi - yj) ** 2)
+        e_ji[j][i] = dist
+
+# Cost of tranpsort type per km
+c_t = {"Rail": 40,
+       "Road": 5}
+
 
 # Mapping from commodity index to color
 commodity_colors = {
@@ -105,42 +123,36 @@ commodity_colors = {
     2: 'orange'   # Coal
 }
 
-# Plotting the nodes
 plt.figure(figsize=(10, 10))
 
-# Plot villages
+# Plot villages with demand info
 for name, (x, y) in V.items():
     plt.plot(x, y, 'bo')  # blue circle for villages
-    plt.text(x + 1, y + 1, name, fontsize=9)
+    demand = d_ij.get(name, (0, 0, 0))
+    plt.text(x + 1, y + 1, f"{name}\n{demand}", fontsize=8)
 
-# Plot factories with color and size depending on commodity and amount
+# Plot factories with commodity color and size by amount
 for name, (x, y) in F.items():
     production = p_jk[name]
     for k in range(len(production)):
         if production[k] > 0:
             color = commodity_colors[k]
-            size = production[k] * 3  # scale marker size
+            size = production[k] * 3  # Scale factor for size
             plt.scatter(x, y, s=size, c=color, marker='+', linewidths=2)
-            plt.text(x + 1, y + 1, name, fontsize=9)
+            plt.text(x + 1, y + 1, f"{name}\n{P[k]}: {production[k]}", fontsize=8)
             break  # Only one commodity per factory
 
-# Legend for commodities
+# Legend for commodity types
 for k, color in commodity_colors.items():
-    plt.scatter([], [], c=color, label=P[k], marker='+', s=100)
+    plt.scatter([], [], c=color, marker='+', s=100, label=P[k])
 
-plt.legend(title='Commodity Produced')
-plt.title('Villages and Factories by Commodity Type and Production')
+plt.legend(title='Factory Commodity')
+plt.title('Villages and Factories with Demand and Production')
 plt.xlabel('X Coordinate')
 plt.ylabel('Y Coordinate')
 plt.grid(True)
 plt.axis('equal')
+plt.tight_layout()
 plt.show()
-
-
-
-
-
-
-
 
 
