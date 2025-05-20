@@ -71,9 +71,28 @@ model.setObjective(
     sense=GRB.MINIMIZE)
 
 # Adding constraints
+for i in N:
+    model.addConstr(gp.quicksum(x_ij[i, j] for j in M) == 1, name=f"assign_{i}")
+    
+for j in M:
+    model.addConstr(
+        gp.quicksum(w_i[i] * x_ij[i, j] for i in N) <= Q_j[j] * u_j[j],
+        name=f"capacity_{j}"
+    )
 
+for i in N:
+    for j in M:
+        model.addConstr(
+            t_j[j] >= A_i[i] * x_ij[i, j],
+            name=f"release_time_{i}_{j}"
+        )
 
-
+for i in N:
+    for j in M:
+        model.addConstr(
+            t_j[j] + T_j[j] <= D_i[i] + d_i[i] + bigM * (1 - x_ij[i, j]),
+            name=f"arrival_time_{i}_{j}"
+        )
 
 
 
