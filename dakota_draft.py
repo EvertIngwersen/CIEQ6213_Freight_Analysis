@@ -28,18 +28,30 @@ containers = [
     {"name": "Container10","weight": 19, "due": 12, "release": 1, "delay_penalty": 30},
     {"name": "Container11","weight": 36, "due": 5,  "release": 1, "delay_penalty": 10},
     {"name": "Container12","weight": 7,  "due": 17, "release": 1, "delay_penalty": 10},
-    {"name": "Container13","weight": 12, "due": 27,  "release": 21, "delay_penalty": 60},
-    {"name": "Container14","weight": 63,  "due": 19, "release": 13, "delay_penalty": 60},
-    {"name": "Container15","weight": 45, "due": 23,  "release": 10, "delay_penalty": 40},
-    {"name": "Container16","weight": 76,  "due": 17, "release": 0, "delay_penalty": 80},
+    {"name": "Container13","weight": 12, "due": 27, "release": 21, "delay_penalty": 60},
+    {"name": "Container14","weight": 63, "due": 19, "release": 13, "delay_penalty": 60},
+    {"name": "Container15","weight": 45, "due": 23, "release": 10, "delay_penalty": 40},
+    {"name": "Container16","weight": 76, "due": 17, "release": 0, "delay_penalty": 80},
     {"name": "Container17","weight": 85, "due": 5,  "release": 3, "delay_penalty": 60},
-    {"name": "Container18","weight": 23,  "due": 22, "release": 11, "delay_penalty": 0},
-    {"name": "Container19","weight": 12, "due": 16,  "release": 10, "delay_penalty": 20},
+    {"name": "Container18","weight": 23, "due": 22, "release": 11, "delay_penalty": 0},
+    {"name": "Container19","weight": 12, "due": 16, "release": 10, "delay_penalty": 20},
     {"name": "Container20","weight": 3,  "due": 15, "release": 1, "delay_penalty": 60},
-    {"name": "Container21","weight": 41, "due": 22,  "release": 1, "delay_penalty": 10},
-    {"name": "Container22","weight": 77,  "due": 30, "release": 1, "delay_penalty": 80},
-    {"name": "Container23","weight": 15,  "due": 5, "release": 0, "delay_penalty": 60},
-    {"name": "Container24","weight": 67, "due": 8,  "release": 0, "delay_penalty": 10}
+    {"name": "Container21","weight": 41, "due": 22, "release": 1, "delay_penalty": 10},
+    {"name": "Container22","weight": 77, "due": 30, "release": 1, "delay_penalty": 80},
+    {"name": "Container23","weight": 15, "due": 5,  "release": 0, "delay_penalty": 60},
+    {"name": "Container24","weight": 67, "due": 8,  "release": 0, "delay_penalty": 10},
+    {"name": "Container25","weight": 50, "due": 14, "release": 4, "delay_penalty": 45},
+    {"name": "Container26","weight": 38, "due": 20, "release": 12, "delay_penalty": 35},
+    {"name": "Container27","weight": 29, "due": 18, "release": 9, "delay_penalty": 25},
+    {"name": "Container28","weight": 17, "due": 25, "release": 15, "delay_penalty": 15},
+    {"name": "Container29","weight": 33, "due": 28, "release": 22, "delay_penalty": 50},
+    {"name": "Container30","weight": 70, "due": 16, "release": 3, "delay_penalty": 65},
+    {"name": "Container31","weight": 28, "due": 13, "release": 7, "delay_penalty": 25},
+    {"name": "Container32","weight": 60, "due": 19, "release": 5, "delay_penalty": 70},
+    {"name": "Container33","weight": 18, "due": 21, "release": 16, "delay_penalty": 15},
+    {"name": "Container34","weight": 40, "due": 24, "release": 20, "delay_penalty": 40},
+    {"name": "Container35","weight": 55, "due": 14, "release": 8, "delay_penalty": 55},
+    {"name": "Container36","weight": 13, "due": 27, "release": 23, "delay_penalty": 10}
 ]
 
 vehicles = [
@@ -55,8 +67,19 @@ vehicles = [
     {"name": "Ship2", "cost": 25,  "capacity": 190, "transit_time": 14},
     {"name": "Train1", "cost": 70, "capacity": 80, "transit_time": 8},
     {"name": "Train2", "cost": 65,  "capacity": 90, "transit_time": 9},
-    {"name": "Train3", "cost": 85,  "capacity": 65, "transit_time": 7}
+    {"name": "Train3", "cost": 85,  "capacity": 65, "transit_time": 7},
+    {"name": "Truck7", "cost": 95,  "capacity": 45, "transit_time": 5},
+    {"name": "Truck8", "cost": 130, "capacity": 50, "transit_time": 7},
+    {"name": "Plane3", "cost": 800, "capacity": 120, "transit_time": 1},
+    {"name": "Ship3",  "cost": 28,  "capacity": 200, "transit_time": 12},
+    {"name": "Train4", "cost": 60,  "capacity": 100, "transit_time": 10},
+    {"name": "Truck9",  "cost": 100, "capacity": 55, "transit_time": 6},
+    {"name": "Truck10", "cost": 115, "capacity": 48, "transit_time": 5},
+    {"name": "Plane4",  "cost": 900, "capacity": 130, "transit_time": 1},
+    {"name": "Ship4",   "cost": 27,  "capacity": 210, "transit_time": 13},
+    {"name": "Train5",  "cost": 75,  "capacity": 95,  "transit_time": 9}
 ]
+
 
 df_i = pd.DataFrame(containers)
 df_vehicles = pd.DataFrame(vehicles)
@@ -200,7 +223,6 @@ df_visual = pd.concat([df_visual, loading_row.to_frame().T])
 
 # Heatmap of assignments (excluding the last two rows that contain departure and loading info)
 assignment_matrix = df_visual.iloc[:-2, :-1].astype(int)
-
 plt.figure(figsize=(12, 8))
 sns.heatmap(assignment_matrix, cmap="Blues", cbar=False, linewidths=0.5, linecolor='gray')
 plt.title("Container Assignments to Vehicles")
