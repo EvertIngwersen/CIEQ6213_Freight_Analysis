@@ -65,6 +65,18 @@ u_j = model.addVars(M, vtype=GRB.BINARY, name="u_j")
 t_j = model.addVars(M, vtype=GRB.CONTINUOUS, name="t_j")
 d_i = model.addVars(N, vtype=GRB.CONTINUOUS, name="d_i")
 
+model.setObjective(
+    gp.quicksum(u_j[j]*C_j[j] for j in M) +
+    gp.quicksum(d_i[i] for i in N),
+    sense=GRB.MINIMIZE)
+
+# Adding constraints
+
+
+
+
+
+
 
 
 
