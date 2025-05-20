@@ -14,7 +14,7 @@ import pandas as pd
 from gurobipy import GRB
 
 delay_factor = 1
-
+sys.exit()
 containers = [
     {"name": "Container1", "weight": 25, "due": 12, "release": 3, "delay_penalty": 30},
     {"name": "Container2", "weight": 12, "due": 8,  "release": 0, "delay_penalty": 20},
