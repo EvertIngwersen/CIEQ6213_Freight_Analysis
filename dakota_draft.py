@@ -6,6 +6,8 @@ Created on Tue May 20 14:09:03 2025
 """
 
 import sys
+import matplotlib.pyplot as plt
+import seaborn as sns
 import numpy as np
 import gurobipy as gp
 import pandas as pd
@@ -30,18 +32,23 @@ containers = [
     {"name": "Container14","weight": 63,  "due": 19, "release": 13, "delay_penalty": 60},
     {"name": "Container15","weight": 45, "due": 23,  "release": 10, "delay_penalty": 40},
     {"name": "Container16","weight": 76,  "due": 17, "release": 0, "delay_penalty": 80},
-    {"name": "Container17","weight": 85, "due": 5,  "release": 3, "delay_penalty": 0},
+    {"name": "Container17","weight": 85, "due": 5,  "release": 3, "delay_penalty": 60},
     {"name": "Container18","weight": 23,  "due": 22, "release": 11, "delay_penalty": 0},
     {"name": "Container19","weight": 12, "due": 16,  "release": 10, "delay_penalty": 20},
-    {"name": "Container20","weight": 3,  "due": 15, "release": 1, "delay_penalty": 60}
+    {"name": "Container20","weight": 3,  "due": 15, "release": 1, "delay_penalty": 60},
+    {"name": "Container21","weight": 41, "due": 22,  "release": 1, "delay_penalty": 10},
+    {"name": "Container22","weight": 77,  "due": 30, "release": 1, "delay_penalty": 80},
+    {"name": "Container23","weight": 15,  "due": 5, "release": 0, "delay_penalty": 60},
+    {"name": "Container24","weight": 67, "due": 8,  "release": 0, "delay_penalty": 10}
 ]
 
 vehicles = [
-    {"name": "Truck1", "cost": 100, "capacity": 38, "transit_time": 5},
-    {"name": "Truck2", "cost": 150, "capacity": 35, "transit_time": 4},
-    {"name": "Truck3", "cost": 124, "capacity": 40, "transit_time": 8},
+    {"name": "Truck1", "cost": 90, "capacity": 38, "transit_time": 5},
+    {"name": "Truck2", "cost": 135, "capacity": 35, "transit_time": 4},
+    {"name": "Truck3", "cost": 110, "capacity": 40, "transit_time": 8},
     {"name": "Truck4", "cost": 90, "capacity": 35, "transit_time": 6},
     {"name": "Truck5", "cost": 90, "capacity": 35, "transit_time": 6},
+    {"name": "Truck6", "cost": 140, "capacity": 65, "transit_time": 8},
     {"name": "Plane1", "cost": 550, "capacity": 75, "transit_time": 2},
     {"name": "Plane2", "cost": 750, "capacity": 100, "transit_time": 1},
     {"name": "Ship1", "cost": 30,  "capacity": 165, "transit_time": 10},
@@ -95,7 +102,7 @@ d_i = model.addVars(N, vtype=GRB.CONTINUOUS, name="d_i")
 
 model.setObjective(
     gp.quicksum(u_j[j]*C_j[j] for j in M) +
-    gp.quicksum(d_i[i] for i in N)*delay_factor,
+    gp.quicksum(d_i[i]*p_i[i] for i in N),
     sense=GRB.MINIMIZE)
 
 # Adding constraints
@@ -191,5 +198,42 @@ loading_row = pd.Series(loading_percent + [np.nan], index=df_visual.columns, nam
 # Append to df_visual
 df_visual = pd.concat([df_visual, loading_row.to_frame().T])
 
+# Heatmap of assignments (excluding the last two rows that contain departure and loading info)
+assignment_matrix = df_visual.iloc[:-2, :-1].astype(int)
 
+plt.figure(figsize=(12, 8))
+sns.heatmap(assignment_matrix, cmap="Blues", cbar=False, linewidths=0.5, linecolor='gray')
+plt.title("Container Assignments to Vehicles")
+plt.xlabel("Vehicles")
+plt.ylabel("Containers")
+plt.show()
+
+# Bar chart for loading percentages
+plt.figure(figsize=(10, 5))
+vehicles = df_visual.columns[:-1]
+plt.bar(vehicles, loading_percent)
+plt.title("Loading Percentages per Vehicle")
+plt.ylabel("Loading (%)")
+plt.xticks(rotation=45)
+plt.show()
+
+# Bar chart for delays per container
+containers = df_visual.index[:-2]
+plt.figure(figsize=(12, 5))
+plt.bar(containers, delay_times)
+plt.title("Delay Times per Container")
+plt.ylabel("Delay (time units)")
+plt.xticks(rotation=90)
+plt.show()
+
+# Departure times per vehicle (only vehicles used)
+used_vehicles = [j for j in df_visual.columns[:-1] if any(df_visual[j].iloc[:-2] == 1)]
+used_depart_times = [depart_times[df_visual.columns.get_loc(j)] for j in used_vehicles]
+
+plt.figure(figsize=(10, 5))
+plt.bar(used_vehicles, used_depart_times, color='green')
+plt.title("Vehicle Departure Times (Used Vehicles Only)")
+plt.ylabel("Departure Time")
+plt.xticks(rotation=45)
+plt.show()
 
