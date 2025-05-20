@@ -131,28 +131,34 @@ if model.status == GRB.OPTIMAL or model.status == GRB.FEASIBLE:
 else:
     print("No feasible solution found.")
 
-# For assignment variables x_ij
 
-depart_times = []
 
-for j in M:
-   depart_times.append(t_j[j].X)  # value of x_ij after optimization (between 0 and 1)
+# Collect departure times for each vehicle (columns)
+depart_times = [t_j[j].X for j in M]
 
-VisualMatrix = np.zeros((len(N),len(M)))
+# Collect delay times for each container (rows)
+delay_times = [d_i[i].X for i in N]
+
+# Build the binary assignment matrix
+VisualMatrix = np.zeros((len(N), len(M)))
 
 for i in N:
     for j in M:
-        val = x_ij[i, j].X
-        # Use index of i and j instead of i and j directly
         i_idx = N.index(i)
         j_idx = M.index(j)
-        VisualMatrix[i_idx, j_idx] = val
-        if VisualMatrix[i_idx, j_idx] != 1:
-            VisualMatrix[i_idx, j_idx] = 0 
-            
+        val = x_ij[i, j].X
+        VisualMatrix[i_idx, j_idx] = 1 if val > 0.5 else 0
+
+# Create DataFrame with container names as row indices and vehicle names as columns
 df_visual = pd.DataFrame(VisualMatrix, index=N, columns=M)
-zero_row = pd.Series(depart_times, index=df_visual.columns, name='Depart Time')
-df_visual = pd.concat([df_visual, zero_row.to_frame().T])
+
+# Add delay times as a new column
+df_visual['Delay Time'] = delay_times
+
+# Add departure times as a new row (append at the bottom)
+depart_row = pd.Series(depart_times + [np.nan], index=df_visual.columns, name='Depart Time')  # np.nan to align with 'Delay Time' column
+df_visual = pd.concat([df_visual, depart_row.to_frame().T])
+
 
 
 
