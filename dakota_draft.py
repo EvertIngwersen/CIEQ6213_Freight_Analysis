@@ -94,27 +94,31 @@ for i in N:
             name=f"arrival_time_{i}_{j}"
         )
 
+# Solve Model
 
+model.optimize()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Check if a feasible solution was found
+if model.status == GRB.OPTIMAL or model.status == GRB.FEASIBLE:
+    print("\nObjective Value:", model.ObjVal)
+    
+    print("\n--- Container Assignments ---")
+    for i in N:
+        for j in M:
+            if x_ij[i, j].X > 0.5:
+                print(f"{i} → {j}")
+    
+    print("\n--- Bins Used ---")
+    for j in M:
+        if u_j[j].X > 0.5:
+            print(f"{j} used, departs at time {t_j[j].X:.1f}")
+    
+    print("\n--- Delays ---")
+    for i in N:
+        if d_i[i].X > 1e-5:
+            print(f"{i} has delay: {d_i[i].X:.1f}")
+else:
+    print("No feasible solution found.")
 
 
 
