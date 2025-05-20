@@ -14,7 +14,7 @@ import pandas as pd
 from gurobipy import GRB
 
 delay_factor = 1
-sys.exit()
+
 containers = [
     {"name": "Container1", "weight": 25, "due": 12, "release": 3, "delay_penalty": 30},
     {"name": "Container2", "weight": 12, "due": 8,  "release": 0, "delay_penalty": 20},
@@ -54,6 +54,7 @@ containers = [
     {"name": "Container36","weight": 13, "due": 27, "release": 23, "delay_penalty": 10}
 ]
 
+
 vehicles = [
     {"name": "Truck1", "cost": 90, "capacity": 38, "transit_time": 5},
     {"name": "Truck2", "cost": 135, "capacity": 35, "transit_time": 4},
@@ -76,8 +77,8 @@ vehicles = [
     {"name": "Truck9",  "cost": 100, "capacity": 55, "transit_time": 6},
     {"name": "Truck10", "cost": 115, "capacity": 48, "transit_time": 5},
     {"name": "Plane4",  "cost": 900, "capacity": 130, "transit_time": 1},
-    {"name": "Ship4",   "cost": 27,  "capacity": 210, "transit_time": 13},
-    {"name": "Train5",  "cost": 75,  "capacity": 95,  "transit_time": 9}
+    # {"name": "Ship4",   "cost": 27,  "capacity": 210, "transit_time": 13},
+    # {"name": "Train5",  "cost": 75,  "capacity": 95,  "transit_time": 9}
 ]
 
 
