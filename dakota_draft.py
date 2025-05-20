@@ -25,7 +25,9 @@ containers = [
     {"name": "Container11","weight": 36, "due": 5,  "release": 1},
     {"name": "Container12","weight": 7,  "due": 17, "release": 1},
     {"name": "Container13","weight": 12, "due": 27,  "release": 21},
-    {"name": "Container14","weight": 63,  "due": 19, "release": 13}
+    {"name": "Container14","weight": 63,  "due": 19, "release": 13},
+    {"name": "Container15","weight": 45, "due": 23,  "release": 10},
+    {"name": "Container16","weight": 33,  "due": 29, "release": 0}
 ]
 
 vehicles = [
@@ -110,7 +112,7 @@ for i in N:
 model.optimize()
 
 # Check if a feasible solution was found
-if model.status == GRB.OPTIMAL or model.status == GRB.FEASIBLE:
+if model.status == GRB.OPTIMAL:
     print("\nObjective Value:", model.ObjVal)
     
     print("\n--- Container Assignments ---")
@@ -130,6 +132,8 @@ if model.status == GRB.OPTIMAL or model.status == GRB.FEASIBLE:
             print(f"{i} has delay: {d_i[i].X:.1f}")
 else:
     print("No feasible solution found.")
+    model.computeIIS()
+    model.write("model.ilp")
 
 
 
