@@ -7,51 +7,62 @@ Created on Tue May 20 14:09:03 2025
 
 import numpy as np
 import gurobipy as gp
+import pandas as pd
 from gurobipy import GRB
 
+
+containers = [
+    {"name": "Container1", "weight": 25, "due": 12, "release": 3},
+    {"name": "Container2", "weight": 12, "due": 8,  "release": 0},
+    {"name": "Container3", "weight": 44, "due": 4,  "release": 0},
+    {"name": "Container4", "weight": 3,  "due": 22, "release": 2},
+    {"name": "Container5", "weight": 22, "due": 21, "release": 5},
+    {"name": "Container6", "weight": 10, "due": 21, "release": 6},
+    {"name": "Container7", "weight": 55, "due": 18, "release": 9},
+    {"name": "Container8", "weight": 76, "due": 17, "release": 10},
+    {"name": "Container9", "weight": 42, "due": 30, "release": 26},
+    {"name": "Container10","weight": 19, "due": 12, "release": 1},
+    {"name": "Container11","weight": 36, "due": 5,  "release": 1},
+    {"name": "Container12","weight": 7,  "due": 17, "release": 1},
+    {"name": "Container13","weight": 12, "due": 27,  "release": 21},
+    {"name": "Container14","weight": 63,  "due": 19, "release": 13}
+]
+
+vehicles = [
+    {"name": "Truck1", "cost": 100, "capacity": 38, "transit_time": 5},
+    {"name": "Truck2", "cost": 150, "capacity": 35, "transit_time": 4},
+    {"name": "Truck3", "cost": 124, "capacity": 40, "transit_time": 8},
+    {"name": "Plane1", "cost": 550, "capacity": 75, "transit_time": 2},
+    {"name": "Ship1", "cost": 30,  "capacity": 105, "transit_time": 10},
+    {"name": "Ship2", "cost": 25,  "capacity": 150, "transit_time": 14}
+]
+
+df_i = pd.DataFrame(containers)
+df_vehicles = pd.DataFrame(vehicles)
+
 # Sets
-N = ["Container1", "Container2", "Container3", "Container4",
-     "Container5", "Container6", "Container7", "Container8",
-     "Container9", "Container10", "Container11", "Container12"]
-M = ["Truck1", "Truck2", "Plane1", "Ship1", "Ship2"] 
+N = df_i["name"].tolist()
+M = df_vehicles["name"].tolist()
 
 # Parameters
 
 # Cost of bin j
-C_j = {"Truck1": 100,
-       "Truck2": 150,
-       "Plane1": 550,
-       "Ship1": 30,
-       "Ship2": 25}
+C_j = df_vehicles.set_index("name")["cost"].to_dict()
 
 # Capacity of bin j
-Q_j = {"Truck1": 38,
-       "Truck2": 35,
-       "Plane1": 75,
-       "Ship1": 105,
-       "Ship2": 150}
+Q_j = df_vehicles.set_index("name")["capacity"].to_dict()
 
 # Transport time of bin j (days)
-T_j = {"Truck1": 5,
-       "Truck2": 4,
-       "Plane1": 2,
-       "Ship1": 10,
-       "Ship2": 14}
+T_j = df_vehicles.set_index("name")["transit_time"].to_dict()
 
 # Weight of container i
-w_i = {"Container1": 25, "Container2": 12, "Container3": 44, "Container4": 3,
-     "Container5": 22, "Container6": 10, "Container7": 55, "Container8": 76,
-     "Container9": 42, "Container10": 19, "Container11": 36, "Container12": 7}
+w_i = df_i.set_index("name")["weight"].to_dict()
 
 # Due time of container i
-D_i = {"Container1": 12, "Container2": 8, "Container3": 4, "Container4": 22,
-     "Container5": 21, "Container6": 21, "Container7": 18, "Container8": 17,
-     "Container9": 30, "Container10": 12, "Container11": 5, "Container12": 17}
+D_i = df_i.set_index("name")["due"].to_dict()
 
 # Release time of container i
-A_i = {"Container1": 3, "Container2": 0, "Container3": 0, "Container4": 2,
-     "Container5": 5, "Container6": 6, "Container7": 9, "Container8": 10,
-     "Container9": 26, "Container10": 1, "Container11": 1, "Container12": 1}
+A_i = df_i.set_index("name")["release"].to_dict()
 
 # A very large number for bigM >> 0 
 bigM = 1000000
@@ -120,9 +131,28 @@ if model.status == GRB.OPTIMAL or model.status == GRB.FEASIBLE:
 else:
     print("No feasible solution found.")
 
+# For assignment variables x_ij
 
+depart_times = []
 
+for j in M:
+   depart_times.append(t_j[j].X)  # value of x_ij after optimization (between 0 and 1)
 
+VisualMatrix = np.zeros((len(N),len(M)))
+
+for i in N:
+    for j in M:
+        val = x_ij[i, j].X
+        # Use index of i and j instead of i and j directly
+        i_idx = N.index(i)
+        j_idx = M.index(j)
+        VisualMatrix[i_idx, j_idx] = val
+        if VisualMatrix[i_idx, j_idx] != 1:
+            VisualMatrix[i_idx, j_idx] = 0 
+            
+df_visual = pd.DataFrame(VisualMatrix, index=N, columns=M)
+zero_row = pd.Series(depart_times, index=df_visual.columns, name='Depart Time')
+df_visual = pd.concat([df_visual, zero_row.to_frame().T])
 
 
 
