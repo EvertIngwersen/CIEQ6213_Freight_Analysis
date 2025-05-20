@@ -56,6 +56,36 @@ A_i = {"Container1": 3, "Container2": 0, "Container3": 0, "Container4": 2,
 # A very large number for bigM >> 0 
 bigM = 1000000
 
+# Making Model
+
+model = gp.Model("Bin Packing with Time Constraint")
+
+x_ij = model.addVars(N, M, vtype=GRB.BINARY, name="x_ij")
+u_j = model.addVars(M, vtype=GRB.BINARY, name="u_j")
+t_j = model.addVars(M, vtype=GRB.CONTINUOUS, name="t_j")
+d_i = model.addVars(N, vtype=GRB.CONTINUOUS, name="d_i")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
