@@ -62,23 +62,23 @@ vehicles = [
     {"name": "Truck4", "cost": 90, "capacity": 35, "transit_time": 6},
     {"name": "Truck5", "cost": 90, "capacity": 35, "transit_time": 6},
     {"name": "Truck6", "cost": 140, "capacity": 65, "transit_time": 8},
+    {"name": "Truck7", "cost": 95,  "capacity": 45, "transit_time": 5},
+    {"name": "Truck8", "cost": 130, "capacity": 50, "transit_time": 7},
     {"name": "Plane1", "cost": 550, "capacity": 75, "transit_time": 2},
     {"name": "Plane2", "cost": 750, "capacity": 100, "transit_time": 1},
+    {"name": "Plane3", "cost": 800, "capacity": 120, "transit_time": 1},
     {"name": "Ship1", "cost": 30,  "capacity": 165, "transit_time": 10},
     {"name": "Ship2", "cost": 25,  "capacity": 190, "transit_time": 14},
+    {"name": "Ship3",  "cost": 28,  "capacity": 200, "transit_time": 12},
     {"name": "Train1", "cost": 70, "capacity": 80, "transit_time": 8},
     {"name": "Train2", "cost": 65,  "capacity": 90, "transit_time": 9},
     {"name": "Train3", "cost": 85,  "capacity": 65, "transit_time": 7},
-    {"name": "Truck7", "cost": 95,  "capacity": 45, "transit_time": 5},
-    {"name": "Truck8", "cost": 130, "capacity": 50, "transit_time": 7},
-    {"name": "Plane3", "cost": 800, "capacity": 120, "transit_time": 1},
-    {"name": "Ship3",  "cost": 28,  "capacity": 200, "transit_time": 12},
     {"name": "Train4", "cost": 60,  "capacity": 100, "transit_time": 10},
     {"name": "Truck9",  "cost": 100, "capacity": 55, "transit_time": 6},
     {"name": "Truck10", "cost": 115, "capacity": 48, "transit_time": 5},
     {"name": "Plane4",  "cost": 900, "capacity": 130, "transit_time": 1},
-    # {"name": "Ship4",   "cost": 27,  "capacity": 210, "transit_time": 13},
-    # {"name": "Train5",  "cost": 75,  "capacity": 95,  "transit_time": 9}
+    {"name": "Ship4",   "cost": 27,  "capacity": 210, "transit_time": 13},
+    {"name": "Train5",  "cost": 75,  "capacity": 95,  "transit_time": 9}
 ]
 
 
@@ -126,7 +126,7 @@ d_i = model.addVars(N, vtype=GRB.CONTINUOUS, name="d_i")
 
 model.setObjective(
     gp.quicksum(u_j[j]*C_j[j] for j in M) +
-    gp.quicksum(d_i[i]*p_i[i] for i in N),
+    gp.quicksum(d_i[i]*p_i[i] for i in N)*delay_factor,
     sense=GRB.MINIMIZE)
 
 # Adding constraints
@@ -222,6 +222,9 @@ loading_row = pd.Series(loading_percent + [np.nan], index=df_visual.columns, nam
 # Append to df_visual
 df_visual = pd.concat([df_visual, loading_row.to_frame().T])
 
+# Make bar chart to show container progress
+
+
 # Heatmap of assignments (excluding the last two rows that contain departure and loading info)
 assignment_matrix = df_visual.iloc[:-2, :-1].astype(int)
 plt.figure(figsize=(12, 8))
@@ -241,9 +244,9 @@ plt.xticks(rotation=45)
 plt.show()
 
 # Bar chart for delays per container
-containers = df_visual.index[:-2]
+container_categorie = df_visual.index[:-2]
 plt.figure(figsize=(12, 5))
-plt.bar(containers, delay_times)
+plt.bar(container_categorie, delay_times)
 plt.title("Delay Times per Container")
 plt.ylabel("Delay (time units)")
 plt.xticks(rotation=90)
@@ -260,3 +263,4 @@ plt.ylabel("Departure Time")
 plt.xticks(rotation=45)
 plt.show()
 
+print(df_visual)
