@@ -6,14 +6,17 @@ Created on Tue May 20 14:09:03 2025
 """
 
 import sys
+import pulp
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 import gurobipy as gp
 import pandas as pd
 from gurobipy import GRB
+import plotly.express as px
 
-delay_factor = 1
+
+delay_factor = 10
 
 containers = [
     {"name": "Container1", "weight": 25, "due": 12, "release": 3, "delay_penalty": 30},
@@ -42,16 +45,16 @@ containers = [
     {"name": "Container24","weight": 67, "due": 8,  "release": 0, "delay_penalty": 10},
     {"name": "Container25","weight": 50, "due": 14, "release": 4, "delay_penalty": 45},
     {"name": "Container26","weight": 38, "due": 20, "release": 12, "delay_penalty": 35},
-    {"name": "Container27","weight": 29, "due": 18, "release": 9, "delay_penalty": 25},
-    {"name": "Container28","weight": 17, "due": 25, "release": 15, "delay_penalty": 15},
-    {"name": "Container29","weight": 33, "due": 28, "release": 22, "delay_penalty": 50},
-    {"name": "Container30","weight": 70, "due": 16, "release": 3, "delay_penalty": 65},
-    {"name": "Container31","weight": 28, "due": 13, "release": 7, "delay_penalty": 25},
-    {"name": "Container32","weight": 60, "due": 19, "release": 5, "delay_penalty": 70},
-    {"name": "Container33","weight": 18, "due": 21, "release": 16, "delay_penalty": 15},
-    {"name": "Container34","weight": 40, "due": 24, "release": 20, "delay_penalty": 40},
-    {"name": "Container35","weight": 55, "due": 14, "release": 8, "delay_penalty": 55},
-    {"name": "Container36","weight": 13, "due": 27, "release": 23, "delay_penalty": 10}
+    # {"name": "Container27","weight": 29, "due": 18, "release": 9, "delay_penalty": 25},
+    # {"name": "Container28","weight": 17, "due": 25, "release": 15, "delay_penalty": 15},
+    # {"name": "Container29","weight": 33, "due": 28, "release": 22, "delay_penalty": 50},
+    # {"name": "Container30","weight": 70, "due": 16, "release": 3, "delay_penalty": 65},
+    # {"name": "Container31","weight": 28, "due": 13, "release": 7, "delay_penalty": 25},
+    # {"name": "Container32","weight": 60, "due": 19, "release": 5, "delay_penalty": 70},
+    # {"name": "Container33","weight": 18, "due": 21, "release": 16, "delay_penalty": 15},
+    # {"name": "Container34","weight": 40, "due": 24, "release": 20, "delay_penalty": 40},
+    # {"name": "Container35","weight": 55, "due": 14, "release": 8, "delay_penalty": 55},
+    # {"name": "Container36","weight": 13, "due": 27, "release": 23, "delay_penalty": 10}
 ]
 
 
@@ -74,11 +77,11 @@ vehicles = [
     {"name": "Train2", "cost": 65,  "capacity": 90, "transit_time": 9},
     {"name": "Train3", "cost": 85,  "capacity": 65, "transit_time": 7},
     {"name": "Train4", "cost": 60,  "capacity": 100, "transit_time": 10},
-    {"name": "Truck9",  "cost": 100, "capacity": 55, "transit_time": 6},
-    {"name": "Truck10", "cost": 115, "capacity": 48, "transit_time": 5},
-    {"name": "Plane4",  "cost": 900, "capacity": 130, "transit_time": 1},
-    {"name": "Ship4",   "cost": 27,  "capacity": 210, "transit_time": 13},
-    {"name": "Train5",  "cost": 75,  "capacity": 95,  "transit_time": 9}
+    # {"name": "Truck9",  "cost": 100, "capacity": 55, "transit_time": 6},
+    # {"name": "Truck10", "cost": 115, "capacity": 48, "transit_time": 5},
+    # {"name": "Plane4",  "cost": 900, "capacity": 130, "transit_time": 1},
+    # {"name": "Ship4",   "cost": 27,  "capacity": 210, "transit_time": 13},
+    # {"name": "Train5",  "cost": 75,  "capacity": 95,  "transit_time": 9}
 ]
 
 
@@ -263,4 +266,67 @@ plt.ylabel("Departure Time")
 plt.xticks(rotation=45)
 plt.show()
 
-print(df_visual)
+# Collect Gantt bars as records
+gantt_data = []
+
+for c in containers:
+    for v in vehicles:
+        if pulp.value(x[c, v]) > 0.5:
+            release = release_time[c]
+            depart = pulp.value(departure_time[v])
+            arrival = depart + transit_time[v]
+
+            gantt_data.append({
+                "Container": f"C{c}",
+                "Start": release,
+                "Finish": depart,
+                "Stage": "Waiting",
+                "Color": "gray"
+            })
+
+            gantt_data.append({
+                "Container": f"C{c}",
+                "Start": depart,
+                "Finish": arrival,
+                "Stage": "Transit",
+                "Color": "green"
+            })
+
+# Convert to DataFrame
+df_gantt = pd.DataFrame(gantt_data)
+
+# Plot with Plotly
+fig = px.timeline(
+    df_gantt,
+    x_start="Start",
+    x_end="Finish",
+    y="Container",
+    color="Stage",
+    color_discrete_map={"Waiting": "gray", "Transit": "green"},
+    title="Gantt Chart of Shipments",
+)
+
+fig.update_yaxes(autorange="reversed")  # So C1 is on top
+fig.update_layout(height=600)
+fig.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
