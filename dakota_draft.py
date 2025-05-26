@@ -266,49 +266,6 @@ plt.ylabel("Departure Time")
 plt.xticks(rotation=45)
 plt.show()
 
-# Collect Gantt bars as records
-gantt_data = []
-
-for c in containers:
-    for v in vehicles:
-        if pulp.value(x[c, v]) > 0.5:
-            release = release_time[c]
-            depart = pulp.value(departure_time[v])
-            arrival = depart + transit_time[v]
-
-            gantt_data.append({
-                "Container": f"C{c}",
-                "Start": release,
-                "Finish": depart,
-                "Stage": "Waiting",
-                "Color": "gray"
-            })
-
-            gantt_data.append({
-                "Container": f"C{c}",
-                "Start": depart,
-                "Finish": arrival,
-                "Stage": "Transit",
-                "Color": "green"
-            })
-
-# Convert to DataFrame
-df_gantt = pd.DataFrame(gantt_data)
-
-# Plot with Plotly
-fig = px.timeline(
-    df_gantt,
-    x_start="Start",
-    x_end="Finish",
-    y="Container",
-    color="Stage",
-    color_discrete_map={"Waiting": "gray", "Transit": "green"},
-    title="Gantt Chart of Shipments",
-)
-
-fig.update_yaxes(autorange="reversed")  # So C1 is on top
-fig.update_layout(height=600)
-fig.show()
 
 
 
