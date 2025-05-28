@@ -23,7 +23,7 @@ df['date'] = pd.to_datetime(df['date'])
 
 # Parameters for dynamic window
 start_time = 0
-total_time = 200 #3320 max
+total_time = 2000 #3320 max
 end_time = start_time + total_time
 
 # Slice dataframe by index to get the time window
@@ -42,15 +42,19 @@ plt.show()
 
 
 # Starting on making a model
+model = gp.Model("Oil Trading")
 T = range(start_time, end_time)  
 
+# Parameters
 p_t = {t: df_window.iloc[t - start_time]['value'] for t in T}
-h_t = {t: 100 for t in T}               # holding cost per barrel per day t
-max_b_t = {t: 80 for t in T}            # max amount what can be bought at day t
-max_s_t = {t: 90 for t in T}            # max amount what can be sold at day t
+h_t = {t: 100 for t in T}                                   # holding cost per barrel per day t
+max_b_t = {t: 80 for t in T}                                # max amount what can be bought at day t
+max_s_t = {t: 90 for t in T}                                # max amount what can be sold at day t
 
-
-
+# Variables
+b_t = model.addVars(T, vtype=GRB.CONTINUOUS, name='b_t')    # Amount oil bought at day t
+s_t = model.addVars(T, vtype=GRB.CONTINUOUS, name='s_t')    # Amount oil sold at day t
+q_t = model.addVars(T, vtype=GRB.CONTINUOUS, name='q_t')    # Amount oil in storage at day t
 
 
 
