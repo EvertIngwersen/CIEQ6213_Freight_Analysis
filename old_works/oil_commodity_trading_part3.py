@@ -98,7 +98,6 @@ if model.status == GRB.OPTIMAL:
                 profit_t += x[τ, t].X * profit_margin
         day_profit.append(profit_t)
 
-
     results = pd.DataFrame({
         'Day': list(T),
         'Date': df_window['date'].values,
@@ -111,10 +110,11 @@ if model.status == GRB.OPTIMAL:
         'Day Profit': day_profit
     })
 
-    for t in T:
-        print(f"Day {t}: Buy = {b_t[t].X:.2f}, Sell = {s_t[t].X:.2f}, Inventory = {q_t[t].X:.2f}, Profit = {day_profit[t]:.2f}")
+    for idx, t in enumerate(T):
+        print(f"Day {t}: Buy = {b_t[t].X:.2f}, Sell = {s_t[t].X:.2f}, Inventory = {q_t[t].X:.2f}, Profit = {day_profit[idx]:.2f}")
 else:
     print("No optimal solution found.")
+
 
 # Making plots
 
