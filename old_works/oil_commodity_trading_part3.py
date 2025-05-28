@@ -59,7 +59,7 @@ q_t = model.addVars(T, vtype=GRB.CONTINUOUS, name='q_t')    # Amount oil in stor
 
 # Objective Function
 
-"""
+r"""
 
 \text{min} \quad ( \sum_{t \in T}^{}(b_t \cdot p_t + h_t \cdot q_t) - \sum_{t \in T }^{}s_t \cdot p_t) 
  
@@ -71,22 +71,3 @@ model.setObjective(
 )
 
 # Constraints
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
