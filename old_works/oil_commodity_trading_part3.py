@@ -23,22 +23,13 @@ df['date'] = pd.to_datetime(df['date'])
 
 # Parameters for dynamic window
 start_time = 0
-total_time = 3000 #3320 max
+total_time = 1000 #3320 max
 end_time = start_time + total_time
 
 # Slice dataframe by index to get the time window
 df_window = df.iloc[start_time:end_time]
 
-# Plot only the selected time window
-plt.figure(figsize=(10, 5))
-plt.plot(df_window['date'], df_window['value'], label='Oil Price', color='blue')
-plt.xlabel('Date')
-plt.ylabel('Price')
-plt.title(f'Oil Price Over Time (Days {start_time} to {end_time})')
-plt.grid(True)
-plt.legend()
-plt.tight_layout()
-plt.show()
+
 
 
 # Starting on making a model
@@ -124,6 +115,61 @@ if model.status == GRB.OPTIMAL:
         print(f"Day {t}: Buy = {b_t[t].X:.2f}, Sell = {s_t[t].X:.2f}, Inventory = {q_t[t].X:.2f}, Profit = {day_profit[t]:.2f}")
 else:
     print("No optimal solution found.")
+
+# Making plots
+
+# Plot only the selected time window
+fig, ax1 = plt.subplots(figsize=(15, 7))
+
+# First plot: Oil Price (left y-axis)
+ax1.plot(df_window['date'], df_window['value'], label='Oil Price', color='blue')
+ax1.set_xlabel('Date')
+ax1.set_ylabel('Oil Price', color='blue')
+ax1.tick_params(axis='y', labelcolor='blue')
+ax1.grid(True)
+
+# Second plot: Day Profit (right y-axis)
+ax2 = ax1.twinx()
+ax2.plot(df_window['date'], day_profit, label='Day Profit', color='orange')
+ax2.set_ylabel('Day Profit', color='orange')
+ax2.tick_params(axis='y', labelcolor='orange')
+
+# Title and layout
+plt.title(f'Oil Price and Day Profit Over Time (Days {start_time} to {end_time})')
+fig.tight_layout()
+plt.show()
+
+
+# Second figure: Oil Price + Buy/Sell bars
+fig, ax1 = plt.subplots(figsize=(15, 7))
+
+# Plot oil price on left y-axis
+ax1.plot(df_window['date'], df_window['value'], label='Oil Price', color='blue', linewidth=2)
+ax1.set_xlabel('Date')
+ax1.set_ylabel('Oil Price', color='blue')
+ax1.tick_params(axis='y', labelcolor='blue')
+ax1.grid(True)
+
+# Create second y-axis
+ax2 = ax1.twinx()
+
+# Plot Buy and Sell bars on right y-axis
+bar_width = 0.4
+dates = df_window['date']
+
+ax2.bar(dates - pd.Timedelta(days=0.2), results['Buy'], width=bar_width, label='Buy', color='green', alpha=0.6)
+ax2.bar(dates + pd.Timedelta(days=0.2), results['Sell'], width=bar_width, label='Sell', color='red', alpha=0.6)
+ax2.set_ylabel('Buy/Sell Volume', color='black')
+ax2.tick_params(axis='y', labelcolor='black')
+
+# Title and legend
+plt.title(f'Oil Price with Buy/Sell Activity (Days {start_time} to {end_time})')
+fig.tight_layout()
+fig.legend(loc='upper left', bbox_to_anchor=(0.1, 0.9))
+plt.show()
+
+
+
 
 
 
