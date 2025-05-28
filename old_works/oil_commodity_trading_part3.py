@@ -11,26 +11,47 @@ import matplotlib.pyplot as plt
 import gurobipy as gp
 from gurobipy import GRB
 
+conversion_factor = 1000
+start_time = 0
+total_time = 1000
 # Load CSV
 file_path = r"C:\Users\evert\Documents\TU-Delft\TIL Master\CIEQ6213 Freight Transport Networks and Systems\CIEQ6213_Freight_Analysis\old_works\oil_csv.csv"
 df = pd.read_csv(file_path)
 
-# Clean column names
-df.columns = df.columns.str.strip()
+# Load Bunkering CSV
+file_path_bunker = r"C:\Users\evert\Documents\TU-Delft\TIL Master\CIEQ6213 Freight Transport Networks and Systems\CIEQ6213_Freight_Analysis\old_works\Daily_Bunker_Fuel_Prices_20250528.csv"
+df_bunker = pd.read_csv(file_path_bunker)
+print(df_bunker.head())
 
-# Convert 'date' column to datetime
+# Clean column names and convert 'date' to datetime for both
+df.columns = df.columns.str.strip()
 df['date'] = pd.to_datetime(df['date'])
 
-# Parameters for dynamic window
-start_time = 0
-total_time = 1000 #3320 max
+df_bunker.columns = df_bunker.columns.str.strip()
+df_bunker['date'] = pd.to_datetime(df_bunker['Day'], format='%m/%d/%Y')
+
+# Get date range of df_bunker
+start_date = df_bunker['date'].min()
+end_date = df_bunker['date'].max()
+
+# Filter df oil price to only include dates within df_bunker range
+df_filtered = df[(df['date'] >= start_date) & (df['date'] <= end_date)].reset_index(drop=True)
+
+# Now slice by index if needed (e.g., first 100 days of aligned data)
+
 end_time = start_time + total_time
 
-# Slice dataframe by index to get the time window
-df_window = df.iloc[start_time:end_time]
+df_window = df_filtered.iloc[start_time:end_time]
+df_bunker_window = df_bunker.iloc[start_time:end_time]
 
+print("Oil price range:", df_filtered['date'].min(), "to", df_filtered['date'].max())
+print("Bunker data range:", df_bunker['date'].min(), "to", df_bunker['date'].max())
 
+# Extract Marine Gas Oil prices for the selected time window (same indices as T)
+marine_gas_oil_costs_metric_tonne = df_bunker_window['Marine Gas Oil'].values
 
+# Convert metric tonne cost to cost per barrel by dividing by 7.6
+marine_gas_oil_costs_per_barrel = marine_gas_oil_costs_metric_tonne / conversion_factor
 
 # Starting on making a model
 model = gp.Model("Oil Trading")
@@ -39,8 +60,8 @@ T = range(start_time, end_time)
 # Parameters
 a_0 = 0                                                    # Initial inventory at day t=0
 p_t = {t: df_window.iloc[t - start_time]['value'] for t in T}
-h_t = {t: 1 for t in T}                                     # Holding cost per barrel per day t
-w_t = {t: 500 for t in T}                                    # Max inventory amount at dat t
+h_t = {t: marine_gas_oil_costs_per_barrel[t - start_time] for t in T} # Holding cost per barrel per day t
+w_t = {t: 1000 for t in T}                                    # Max inventory amount at dat t
 max_b_t = {t: 600 for t in T}                                # Max amount what can be bought at day t
 max_s_t = {t: 300 for t in T}                                # Max amount what can be sold at day t
 
@@ -168,7 +189,33 @@ fig.tight_layout()
 fig.legend(loc='upper left', bbox_to_anchor=(0.1, 0.9))
 plt.show()
 
+# Third figure: Oil Price + Marine Gas Oil Bunker Price
+fig, ax1 = plt.subplots(figsize=(15, 7))
 
+# Plot Oil Price (left y-axis)
+ax1.plot(df_window['date'], df_window['value'], label='Oil Price', color='blue', linewidth=2)
+ax1.set_xlabel('Date')
+ax1.set_ylabel('Oil Price', color='blue')
+ax1.tick_params(axis='y', labelcolor='blue')
+ax1.grid(True)
+
+# Create second y-axis for bunker price
+ax2 = ax1.twinx()
+
+# Plot Marine Gas Oil bunker price (per barrel) on right y-axis
+ax2.plot(df_bunker_window['date'], marine_gas_oil_costs_per_barrel, label='Marine Gas Oil Price (per barrel)', color='green', linestyle='--', linewidth=2)
+ax2.set_ylabel('Marine Gas Oil Price (per barrel)', color='green')
+
+# Title and legend
+plt.title(f'Oil Price and Marine Gas Oil Bunker Price (Days {start_time} to {end_time})')
+fig.tight_layout()
+
+# Combine legends from both axes
+lines_1, labels_1 = ax1.get_legend_handles_labels()
+lines_2, labels_2 = ax2.get_legend_handles_labels()
+plt.legend(lines_1 + lines_2, labels_1 + labels_2, loc='upper left')
+
+plt.show()
 
 
 
