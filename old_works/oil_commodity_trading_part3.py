@@ -49,6 +49,7 @@ T = range(start_time, end_time)
 a_0 = 20                                                    # Initial inventory at day t=0
 p_t = {t: df_window.iloc[t - start_time]['value'] for t in T}
 h_t = {t: 100 for t in T}                                   # Holding cost per barrel per day t
+w_t = {t: 300 for t in T}                                   # Max inventory amount at dat t
 max_b_t = {t: 80 for t in T}                                # Max amount what can be bought at day t
 max_s_t = {t: 90 for t in T}                                # Max amount what can be sold at day t
 
@@ -71,3 +72,30 @@ model.setObjective(
 )
 
 # Constraints
+
+#1: inventory must not exceed max storage capacity
+for t in T:
+    model.addConstr(q_t[t] <= w_t[t], name=f"storage_limit_{t}") 
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
