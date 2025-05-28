@@ -52,36 +52,7 @@ Q_max = 200                       # max buy per day
 S_max = 150                       # max sell per day
 a0 = 0                           # initial inventory
 
-# Create model
-model = gp.Model("Oil_Trading")
 
-# Decision variables
-q = model.addVars(T, lb=0, ub=Q_max, name="Buy")
-s = model.addVars(T, lb=0, ub=S_max, name="Sell")
-a = model.addVars(T, lb=0, ub=A_max, name="Inventory")
-
-# Set initial inventory constraint for t=1 (handle a_0 = 0)
-model.addConstr(a[1] == a0 + q[1] - s[1], "inventory_balance_1")
-
-# Inventory balance constraints for t > 1
-for t in T:
-    if t > 1:
-        model.addConstr(a[t] == a[t-1] + q[t] - s[t], f"inventory_balance_{t}")
-
-# Objective function: minimize total cost
-obj = gp.quicksum(h[t] * a[t] + p[t] * q[t] - p[t] * s[t] + c_q * q[t] + c_s * s[t] for t in T)
-model.setObjective(obj, GRB.MINIMIZE)
-
-# Optimize model
-model.optimize()
-
-# Print results
-if model.status == GRB.OPTIMAL:
-    print("Optimal solution found:")
-    for t in T:
-        print(f"Day {t}: Buy = {q[t].X:.2f}, Sell = {s[t].X:.2f}, Inventory = {a[t].X:.2f}")
-else:
-    print("No optimal solution found.")
 
 
 
