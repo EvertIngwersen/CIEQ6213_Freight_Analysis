@@ -77,6 +77,17 @@ model.setObjective(
 for t in T:
     model.addConstr(q_t[t] <= w_t[t], name=f"storage_limit_{t}") 
     
+#2: buying limit
+for t in T:
+    model.addConstr(b_t[t] <= max_b_t[t], name=f"buy_limit_{t}")
+
+#3: selling limit
+for t in T:
+    model.addConstr(s_t[t] <= max_s_t[t], name=f"sell_limit_{t}")
+    
+#4: set start inventory
+model.addConstr(q_t[start_time] == a_0, name=f"start_inventory")
+    
 
 
 
