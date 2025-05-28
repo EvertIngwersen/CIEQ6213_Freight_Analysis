@@ -23,7 +23,7 @@ df['date'] = pd.to_datetime(df['date'])
 
 # Parameters for dynamic window
 start_time = 0
-total_time = 2000 #3320 max
+total_time = 100 #3320 max
 end_time = start_time + total_time
 
 # Slice dataframe by index to get the time window
@@ -48,10 +48,10 @@ T = range(start_time, end_time)
 # Parameters
 a_0 = 20                                                    # Initial inventory at day t=0
 p_t = {t: df_window.iloc[t - start_time]['value'] for t in T}
-h_t = {t: 100 for t in T}                                   # Holding cost per barrel per day t
-w_t = {t: 300 for t in T}                                   # Max inventory amount at dat t
-max_b_t = {t: 80 for t in T}                                # Max amount what can be bought at day t
-max_s_t = {t: 90 for t in T}                                # Max amount what can be sold at day t
+h_t = {t: 1 for t in T}                                     # Holding cost per barrel per day t
+w_t = {t: 50 for t in T}                                    # Max inventory amount at dat t
+max_b_t = {t: 60 for t in T}                                # Max amount what can be bought at day t
+max_s_t = {t: 30 for t in T}                                # Max amount what can be sold at day t
 
 # Variables
 b_t = model.addVars(T, vtype=GRB.CONTINUOUS, name='b_t')    # Amount oil bought at day t
@@ -95,9 +95,33 @@ for t in range(start_time + 1, end_time):
         name=f"inventory_balance_{t}"
     )
     
+#6: prohibit selling oil on the same day it was bought
+for t in range(start_time + 1, end_time):
+    model.addConstr(
+        s_t[t] <= q_t[t - 1],
+        name=f"no_same_day_sell_{t}"
+    )
+
 # Optimize the model
 model.optimize()
 
+if model.status == GRB.OPTIMAL:
+    print("\nOptimal solution found:")
+    # Create a results DataFrame
+    results = pd.DataFrame({
+        'Day': list(T),
+        'Date': df_window['date'].values,
+        'Price': [p_t[t] for t in T],
+        'Buy': [b_t[t].X for t in T],
+        'Sell': [s_t[t].X for t in T],
+        'Inventory': [q_t[t].X for t in T],
+        'Holding cost': list(h_t.values()),
+        'Max Inventory': list(w_t.values())
+    })
+    for t in T:
+        print(f"Day {t}: Buy = {b_t[t].X:.2f}, Sell = {s_t[t].X:.2f}, Inventory = {q_t[t].X:.2f}")
+else:
+    print("No optimal solution found.")
 
 
 
