@@ -86,16 +86,17 @@ for t in T:
     model.addConstr(s_t[t] <= max_s_t[t], name=f"sell_limit_{t}")
     
 #4: set start inventory
-model.addConstr(q_t[start_time] == a_0, name=f"start_inventory")
+model.addConstr(q_t[start_time] == a_0, name="start_inventory")
+
+#5: inventory balance
+for t in range(start_time + 1, end_time):
+    model.addConstr(
+        q_t[t] == q_t[t - 1] + b_t[t] - s_t[t],
+        name=f"inventory_balance_{t}"
+    )
     
-
-
-
-
-
-
-
-
+# Optimize the model
+model.optimize()
 
 
 
