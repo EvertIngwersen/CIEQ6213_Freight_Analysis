@@ -43,14 +43,15 @@ plt.show()
 
 # Starting on making a model
 T = range(start_time, end_time)  
-p = {t: df_window.iloc[t - start_time]['value'] for t in T}
-h = {t: 100 for t in T}             # holding cost per barrel per day
-c_q = 2                            # transaction cost per barrel bought
-c_s = 3                            # transaction cost per barrel sold
-A_max = 1000                      # max storage capacity
-Q_max = 200                       # max buy per day
-S_max = 150                       # max sell per day
-a0 = 0                           # initial inventory
+
+p_t = {t: df_window.iloc[t - start_time]['value'] for t in T}
+h_t = {t: 100 for t in T}               # holding cost per barrel per day t
+max_b_t = {t: 80 for t in T}            # max amount what can be bought at day t
+max_s_t = {t: 90 for t in T}            # max amount what can be sold at day t
+
+
+
+
 
 
 
