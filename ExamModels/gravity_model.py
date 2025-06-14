@@ -10,8 +10,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Set number of regions
-n_origins = 5000
-n_destinations = 5000
+n_origins = 50
+n_destinations = 50
 
 # Random seed for reproducibility
 np.random.seed(77)
