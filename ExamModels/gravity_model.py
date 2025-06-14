@@ -10,7 +10,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Set number of regions
-n_origins = 50
+n_origins = 5000
 n_destinations = 5000
 
 # Random seed for reproducibility
@@ -36,14 +36,5 @@ df_T = pd.DataFrame(T,
 print("Gravity Model Trip Matrix:")
 print(df_T.round(2))
 
-# Optional: Heatmap
-plt.figure(figsize=(8, 5))
-plt.title("Trip Distribution Heatmap")
-plt.imshow(df_T, cmap='viridis', aspect='auto')
-plt.colorbar(label='Number of Trips')
-plt.xticks(ticks=np.arange(n_destinations), labels=df_T.columns)
-plt.yticks(ticks=np.arange(n_origins), labels=df_T.index)
-plt.xlabel("Destination")
-plt.ylabel("Origin")
-plt.tight_layout()
-plt.show()
+
+
