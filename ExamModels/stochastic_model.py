@@ -6,6 +6,7 @@ Created on Wed Jun 18 14:44:22 2025
 """
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 # Problem data
 cost_per_unit = 10
@@ -13,8 +14,9 @@ penalty_per_unit_unmet = 20
 
 # Scenario probabilities and demands
 scenarios = [
-    {"prob": 0.5, "demand": 100},
+    {"prob": 0.3, "demand": 100},
     {"prob": 0.1, "demand": 200},
+    {"prob": 0.2, "demand": 800},
     {"prob": 0.25, "demand": 700},
     {"prob": 0.15, "demand": 30}
 ]
@@ -67,3 +69,46 @@ print(f"Best stochastic solution x = {x_RP}, cost (RP): {RP:.2f}")
 print(f"Wait-and-see cost (WS): {WS:.2f}")
 print(f"Value of Stochastic Solution (VSS): {VSS:.2f}")
 print(f"Expected Value of Perfect Information (EVPI): {EVPI:.2f}")
+
+
+# === Plotting ===
+plt.figure(figsize=(10, 6))
+plt.plot(x_vals, costs, label="Stochastic Cost Curve (Total Expected Cost)", color='blue')
+
+# Highlight RP solution
+plt.axvline(x=x_RP, color='green', linestyle='--', label=f"RP (x={x_RP})")
+plt.axhline(y=RP, color='green', linestyle='--')
+
+# Highlight EEV solution
+plt.axvline(x=x_EEV, color='orange', linestyle='--', label=f"EEV (x={x_EEV:.1f})")
+plt.axhline(y=EEV, color='orange', linestyle='--')
+
+# Highlight WS cost
+plt.axhline(y=WS, color='red', linestyle='--', label=f"WS Cost = {WS:.2f}")
+
+# Labels and legend
+plt.xlabel("Production Quantity (x)")
+plt.ylabel("Total Expected Cost")
+plt.title("Stochastic Linear Programming Cost Curve")
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
