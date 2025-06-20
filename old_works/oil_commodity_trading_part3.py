@@ -54,7 +54,7 @@ marine_gas_oil_costs_metric_tonne = df_bunker_window['Marine Gas Oil'].values
 marine_gas_oil_costs_per_barrel = marine_gas_oil_costs_metric_tonne / conversion_factor
 
 # Starting on making a model
-model = gp.Model("Oil Trading")
+model = gp.Model("Oil Trading Linear Programming")
 T = range(start_time, end_time)  
 
 # Parameters
