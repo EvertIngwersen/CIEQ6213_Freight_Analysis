@@ -77,11 +77,11 @@ vehicles = [
     {"name": "Train2", "cost": 65,  "capacity": 90, "transit_time": 9},
     {"name": "Train3", "cost": 85,  "capacity": 65, "transit_time": 7},
     {"name": "Train4", "cost": 60,  "capacity": 100, "transit_time": 10},
-    # {"name": "Truck9",  "cost": 100, "capacity": 55, "transit_time": 6},
-    # {"name": "Truck10", "cost": 115, "capacity": 48, "transit_time": 5},
-    # {"name": "Plane4",  "cost": 900, "capacity": 130, "transit_time": 1},
-    # {"name": "Ship4",   "cost": 27,  "capacity": 210, "transit_time": 13},
-    # {"name": "Train5",  "cost": 75,  "capacity": 95,  "transit_time": 9}
+    {"name": "Truck9",  "cost": 100, "capacity": 55, "transit_time": 6},
+    {"name": "Truck10", "cost": 115, "capacity": 48, "transit_time": 5},
+    {"name": "Plane4",  "cost": 900, "capacity": 130, "transit_time": 1},
+    {"name": "Ship4",   "cost": 27,  "capacity": 210, "transit_time": 13},
+    {"name": "Train5",  "cost": 75,  "capacity": 95,  "transit_time": 9}
 ]
 
 
