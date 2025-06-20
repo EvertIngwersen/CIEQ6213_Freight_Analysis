@@ -12,7 +12,7 @@ import gurobipy as gp
 from gurobipy import GRB
 
 conversion_factor = 1000
-start_time = 0
+start_time = 1
 total_time = 1600
 # Load CSV
 file_path = r"C:\Users\evert\Documents\TU-Delft\TIL Master\CIEQ6213 Freight Transport Networks and Systems\CIEQ6213_Freight_Analysis\old_works\oil_csv.csv"
