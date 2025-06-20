@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import gurobipy as gp
 from gurobipy import GRB
 
-conversion_factor = 1001 # Conversion factor from metric tonne to barrel (1 metric tonne = 7.6 barrels)
+conversion_factor = 999 # Conversion factor from metric tonne to barrel (1 metric tonne = 7.6 barrels)
 start_time = 1
 total_time = 1600
 # Load CSV
