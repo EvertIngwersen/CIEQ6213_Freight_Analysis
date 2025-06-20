@@ -184,7 +184,7 @@ ax2.set_ylabel('Buy/Sell Volume', color='black')
 ax2.tick_params(axis='y', labelcolor='black')
 
 # Title and legend
-plt.title(f'Oil Price with Buy/Sell Activity (Days {start_time} to {end_time})')
+plt.title(f'Oil Price with Buy / Sell Activity (Days {start_time} to {end_time})')
 fig.tight_layout()
 fig.legend(loc='upper left', bbox_to_anchor=(0.1, 0.9))
 plt.show()
