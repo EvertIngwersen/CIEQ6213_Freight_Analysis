@@ -11,11 +11,11 @@ import matplotlib.pyplot as plt
 import gurobipy as gp
 from gurobipy import GRB
 
-conversion_factor = 1000
+conversion_factor = 1001 # Conversion factor from metric tonne to barrel (1 metric tonne = 7.6 barrels)
 start_time = 1
 total_time = 1600
 # Load CSV
-file_path = r"C:\Users\evert\Documents\TU-Delft\TIL Master\CIEQ6213 Freight Transport Networks and Systems\CIEQ6213_Freight_Analysis\old_works\oil_csv.csv"
+file_path = r"C:\Users\evert\Documents\TU-Delft\TIL Master\CIEQ6213 Freight Transport Networks and Systems\CIEQ6213_Freight_Analysis\old_works\oil_csv.csv" 
 df = pd.read_csv(file_path)
 
 # Load Bunkering CSV
