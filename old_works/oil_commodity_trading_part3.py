@@ -108,6 +108,7 @@ model.optimize()
 
 if model.status == GRB.OPTIMAL:
     print("\nOptimal solution found:")
+    print("")
 
     day_profit = []
     for t in T:
