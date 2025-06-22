@@ -10,14 +10,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def simulate_bullwhip(
-    num_periods=52,  # Number of simulation periods (e.g., weeks)
+    num_periods=150,  # Number of simulation periods (e.g., weeks)
     initial_inventory=60,
-    safety_stock_factor=0.2, # Each entity orders an additional % of their forecasted demand as safety stock
+    safety_stock_factor=0.1, # Each entity orders an additional % of their forecasted demand as safety stock
     retailer_lead_time=1,
     wholesaler_lead_time=2,
     manufacturer_lead_time=3,
     base_consumer_demand=100,
-    demand_fluctuation_amplitude=5): # Max variation from base demand
+    demand_fluctuation_amplitude=15): # Max variation from base demand
     
     """
     Simulates the bullwhip effect in a simplified supply chain.
