@@ -19,20 +19,24 @@ class SupplyChainEntity:
         self.safety_stock_factor = safety_stock_factor
 
         self.orders_placed = []  # History of orders placed by this entity
-        self.orders_received = [] # History of orders received by this entity
+        self.orders_received = [] # History of orders received by this entity (from downstream)
         self.fulfilled_demand_history = [] # History of demand fulfilled by this entity
 
         # Queue to simulate goods in transit
-        self.incoming_queue = [0] * lead_time # Represents goods ordered by this entity, on their way
+        # Initialize with zeros to represent empty pipeline.
+        # The size of this queue will dynamically change as items are added/removed.
+        self.incoming_queue = [0] * lead_time # Represents goods ordered by this entity, on their way.
 
     def receive_goods(self, period):
-        # Goods arrive if enough time has passed for the lead time
-        if period >= self.lead_time:
-            # Pop the oldest item from the queue and add to inventory
-            received_amount = self.incoming_queue.pop(0)
+        # We need to make sure there's something to pop AND that the lead time condition is met.
+        # The lead time condition means we only *start* receiving after the first possible arrival.
+        # The more robust way is to just pop if there's an item, as the item itself (even a 0)
+        # represents a slot in the lead time.
+        received_amount = 0
+        if self.incoming_queue: # Check if the list is not empty
+            received_amount = self.incoming_queue.pop(0) # Remove the item at the front of the queue
             self.inventory += received_amount
-            return received_amount
-        return 0 # Nothing received yet if lead time not met
+        return received_amount
 
     def fulfill_demand(self, demand_amount):
         fulfilled = min(self.inventory, demand_amount)
