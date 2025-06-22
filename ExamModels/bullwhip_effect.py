@@ -54,3 +54,34 @@ def simulate_bullwhip(
     retailer_incoming_queue = [0] * wholesaler_lead_time
     wholesaler_incoming_queue = [0] * manufacturer_lead_time
     manufacturer_production_queue = [0] * manufacturer_lead_time # Manufacturer's own production lead time
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
