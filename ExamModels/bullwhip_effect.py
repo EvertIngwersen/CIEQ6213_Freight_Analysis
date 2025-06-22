@@ -171,8 +171,8 @@ plt.tight_layout()
 plt.show()
 
 # You can also inspect the raw data
-# print(simulation_results.head())
-# print(simulation_results.tail())
+print(simulation_results.head())
+print(simulation_results.tail())
     
     
     
