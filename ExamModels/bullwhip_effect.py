@@ -153,6 +153,26 @@ def simulate_bullwhip(
 # --- Run the Simulation ---
 simulation_results = simulate_bullwhip()
     
+# --- Plotting the Results ---
+plt.figure(figsize=(14, 8))
+
+plt.plot(simulation_results['Period'], simulation_results['Consumer_Demand'], label='Consumer Demand (Retail Outflow)', linewidth=2, linestyle='--', color='blue')
+plt.plot(simulation_results['Period'], simulation_results['Retailer_Orders_Wholesaler'], label='Retailer Orders to Wholesaler', linewidth=2, color='green')
+plt.plot(simulation_results['Period'], simulation_results['Wholesaler_Orders_Manufacturer'], label='Wholesaler Orders to Manufacturer', linewidth=2, color='orange')
+plt.plot(simulation_results['Period'], simulation_results['Manufacturer_Production_Orders'], label='Manufacturer Production Orders', linewidth=2, color='red')
+
+plt.title('Bullwhip Effect in a Simplified Supply Chain')
+plt.xlabel('Time Period (Weeks)')
+plt.ylabel('Order Quantity / Demand')
+plt.legend()
+plt.grid(True, linestyle=':', alpha=0.7)
+plt.axhline(y=100, color='grey', linestyle='-.', label='Base Demand Level')
+plt.tight_layout()
+plt.show()
+
+# You can also inspect the raw data
+# print(simulation_results.head())
+# print(simulation_results.tail())
     
     
     
