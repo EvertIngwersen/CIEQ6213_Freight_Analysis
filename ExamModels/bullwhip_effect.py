@@ -150,6 +150,8 @@ def simulate_bullwhip(
 
     return df
 
+# --- Run the Simulation ---
+simulation_results = simulate_bullwhip()
     
     
     
