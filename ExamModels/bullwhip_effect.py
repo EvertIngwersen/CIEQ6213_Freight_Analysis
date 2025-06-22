@@ -35,3 +35,22 @@ def simulate_bullwhip(
     Returns:
         pd.DataFrame: A DataFrame containing the simulation results.
     """
+    
+    # Initialize data storage
+    data = {
+        'Period': list(range(num_periods)),
+        'Consumer_Demand': [0] * num_periods,
+        'Retailer_Orders_Wholesaler': [0] * num_periods,
+        'Retailer_Inventory': [initial_inventory] * num_periods,
+        'Wholesaler_Orders_Manufacturer': [0] * num_periods,
+        'Wholesaler_Inventory': [initial_inventory] * num_periods,
+        'Manufacturer_Production_Orders': [0] * num_periods,
+        'Manufacturer_Inventory': [initial_inventory] * num_periods,
+    }
+
+    df = pd.DataFrame(data)
+
+    # Queues for incoming orders/production (representing lead times)
+    retailer_incoming_queue = [0] * wholesaler_lead_time
+    wholesaler_incoming_queue = [0] * manufacturer_lead_time
+    manufacturer_production_queue = [0] * manufacturer_lead_time # Manufacturer's own production lead time
