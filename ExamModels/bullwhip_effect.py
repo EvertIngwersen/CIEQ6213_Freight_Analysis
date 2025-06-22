@@ -19,4 +19,19 @@ def simulate_bullwhip(
     base_consumer_demand=100,
     demand_fluctuation_amplitude=5 # Max variation from base demand
     
-    
+    """
+    Simulates the bullwhip effect in a simplified supply chain.
+
+    Args:
+        num_periods (int): Total number of simulation periods.
+        initial_inventory (int): Starting inventory for all entities.
+        safety_stock_factor (float): Factor for additional stock ordered beyond forecast.
+        retailer_lead_time (int): Lead time for retailer to receive goods from wholesaler.
+        wholesaler_lead_time (int): Lead time for wholesaler to receive goods from manufacturer.
+        manufacturer_lead_time (int): Lead time for manufacturer to produce/receive raw materials.
+        base_consumer_demand (int): Average consumer demand per period.
+        demand_fluctuation_amplitude (int): Max deviation from base demand for consumer.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing the simulation results.
+    """
