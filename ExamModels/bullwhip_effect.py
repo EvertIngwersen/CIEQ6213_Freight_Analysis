@@ -17,7 +17,7 @@ def simulate_bullwhip(
     wholesaler_lead_time=2,
     manufacturer_lead_time=3,
     base_consumer_demand=100,
-    demand_fluctuation_amplitude=5 # Max variation from base demand
+    demand_fluctuation_amplitude=5): # Max variation from base demand
     
     """
     Simulates the bullwhip effect in a simplified supply chain.
