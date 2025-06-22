@@ -28,8 +28,8 @@ V = {
     'Village11': (55, 51),
     'Village12': (16, 47),
     'Village13': (86, 23),
-    'Village14': (77, 43),
-    'Village15': (93, 8),
+    'Village14': (77, 12),
+    'Village15': (92, 8),
     'Village16': (64, 100),
     'Village17': (97, 11),
     'Village18': (80, 66)

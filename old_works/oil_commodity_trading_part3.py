@@ -191,7 +191,7 @@ fig.legend(loc='upper left', bbox_to_anchor=(0.1, 0.9))
 plt.show()
 
 # Third figure: Oil Price + Marine Gas Oil Bunker Price
-fig, ax1 = plt.subplots(figsize=(15, 7))
+fig, ax1 = plt.subplots(figsize=(14, 7))
 
 # Plot Oil Price (left y-axis)
 ax1.plot(df_window['date'], df_window['value'], label='Oil Price', color='blue', linewidth=2)
@@ -217,18 +217,4 @@ lines_2, labels_2 = ax2.get_legend_handles_labels()
 plt.legend(lines_1 + lines_2, labels_1 + labels_2, loc='upper left')
 
 plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Fourth figure: Inventory Over Time
