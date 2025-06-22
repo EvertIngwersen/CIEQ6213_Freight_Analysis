@@ -73,14 +73,14 @@ class SupplyChainEntity:
 
 # --- 2. Simulation Function (Orchestrator) ---
 def simulate_bullwhip_oop(
-    num_periods=52,
-    initial_inventory=50,
+    num_periods=152,
+    initial_inventory=0,
     safety_stock_factor=0.2,
-    retailer_lead_time=1, # Retailer receives from wholesaler
+    retailer_lead_time=2, # Retailer receives from wholesaler
     wholesaler_lead_time=2, # Wholesaler receives from manufacturer
-    manufacturer_lead_time=3, # Manufacturer produces / receives from raw material supplier
-    base_consumer_demand=100,
-    demand_fluctuation_amplitude=5
+    manufacturer_lead_time=2, # Manufacturer produces / receives from raw material supplier
+    base_consumer_demand=10,
+    demand_fluctuation_amplitude=10
 ):
     # Initialize entities
     retailer = SupplyChainEntity("Retailer", initial_inventory, retailer_lead_time, safety_stock_factor)
