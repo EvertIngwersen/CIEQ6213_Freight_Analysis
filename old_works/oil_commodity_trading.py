@@ -186,7 +186,7 @@ for i in V_d:
 # Delivery Flow Implies Hub is Open (ensure i != j)
 for i in V_d:
     for j in V_d:
-        if i != j:  # Add this check
+        if i != j:  # Add this  check
             for k in V_h:
                 model.addConstr(
                     b[i, j, k] <= z[k],  # If commodity (i, j) is delivered from hub k, then hub k must be selected
