@@ -34,7 +34,7 @@ hub_service_triples = [(k, m, t) for k, m in hub_pairs for t in T]
 #-------------------PARAMTERS------------------
 W = {
     ('A', 'B'): 13,
-    ('A', 'C'): 10,
+    ('A', 'C'): 9,
     ('B', 'A'): 16,
     ('B', 'C'): 26,
     ('C', 'A'): 13,
